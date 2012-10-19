@@ -1,0 +1,15 @@
+// This File is imported last, and will override other styles in the cascade
+// Add styles here to make changes without digging in too much
+
+body > header h1{
+  font-size: 2.0em;
+  padding-left: 57px;
+  text-shadow: rgba(0, 0, 0, 0.8) 0 0 8px;
+}
+
+body > header h2{
+  font-size: 0.8em;
+  letter-spacing: 1px;
+  margin-top: -0.2em;
+  padding-left: 58px;
+}
