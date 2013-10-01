@@ -103,11 +103,11 @@ osascript /path/to/file.scpt
 osascript ~/Documents/Scripts/iTunesvol.scpt
 ```
 
-[iTunesvol.scpt](/files/iTunesvol.scpt) - outputs the current internal iTunes volume.
+[iTunesvol.scpt](/downloads/geektool/iTunesvol.scpt) - outputs the current internal iTunes volume.
 
-[shuffstatus.scpt](/files/shuffstatus.scpt) - outputs 'Yes' or 'No' depending on shuffle status of current playlist.
+[shuffstatus.scpt](/downloads/geektool/shuffstatus.scpt) - outputs 'Yes' or 'No' depending on shuffle status of current playlist.
 
-[currentsong.scpt](/files/currentsong.scpt) - outputs information about current playing song in iTunes.
+[currentsong.scpt](/downloads/geektool/currentsong.scpt) - outputs information about current playing song in iTunes.
 
 <br>
 ####Fan Speeds / Internal Temperatures####
@@ -126,13 +126,13 @@ If that doesn't work, then you may need to execute this command before it.
 chmod +x /path/to/fans_tempsMonitor
 ```
 
-[fans_tempsMonitor](/files/fans_tempsMonitor) - shell application that outputs fan speeds and internal computer temperatures.
+[fans_tempsMonitor](/downloads/geektool/fans_tempsMonitor) - shell application that outputs fan speeds and internal computer temperatures.
 
 
 ####Top CPU Processes####
 This one is easy. Just download the Geeklet, double click on it, and it will install automatically.
 
-[top.glet](/files/top.glet) - Geeklet that outputs the 2 top processes by CPU %.
+[top.glet](/downloads/geektool/top.glet) - Geeklet that outputs the 2 top processes by CPU %.
 
 ####Tips and Hints####
 I use the font Monaco size 11. It is monospace, which makes it very easy to format and make everything stay in line. I use a generic black background with white text. 
