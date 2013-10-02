@@ -39,7 +39,4 @@ sudo launchctl load -w -F /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.
 # create script in local user directory and make them executable
 sudo touch /etc/rc.wakeup
 sudo touch /etc/rc.sleep
-echo "Script written to /etc/rc.sleep"
-echo '#!/bin/sh' | sudo tee -a /etc/rc.sleep
-echo "osascript -e 'set volume 0'" | sudo tee -a /etc/rc.sleep
 sudo chmod +x /etc/rc.sleep /etc/rc.wakeup

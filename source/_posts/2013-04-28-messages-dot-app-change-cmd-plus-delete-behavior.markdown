@@ -4,6 +4,8 @@ title: "Messages : Change cmd + delete behavior"
 date: 2013-04-28 12:22
 comments: true
 categories: 
+- mac
+- osx
 ---
 
 {% img center /images/posts/messages_delete0.png %}
