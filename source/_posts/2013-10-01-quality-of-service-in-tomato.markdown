@@ -8,9 +8,9 @@ categories:
 - networking
 ---
 
-Tomato is an open-source router firmware for many of today's routers. I personally have it installed on my Asus RT-N16 router, and I love it. I've had it running on the router for more than two years, but I just recently discovered one of its best features, Quality of Service. 
+[Tomato](http://www.polarcloud.com/tomato) is an open-source router firmware for many of today's routers. I have it installed on my Asus RT-N16 router, and I love it. I've had it running on the router for more than two years, but I just recently discovered one of its best features, Quality of Service. 
 
-In a nutshell, Quality of Service in a router deals with prioritizing certain traffic over other kinds and sometimes limiting the overall bandwidth of connections to and from the Internet. The benefit of this is so that roommate who always torrents won't have a direct affect on how fast your Internet browsing is since the torrent download would have a lower priority.
+In a nutshell, Quality of Service in a router prioritizes certain traffic over other traffic depending on what kind it is and it can limit the overall bandwidth of connections to and from the Internet. The benefit of this is so that roommate who always torrents won't have a direct affect on how fast your Internet browsing is since the torrent download would have a lower priority.
 
 <!-- more -->
 
