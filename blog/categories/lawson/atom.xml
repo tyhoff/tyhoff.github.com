@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Lawson | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/lawson/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Access Purdue CS printers remotely]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely/"/>
+    <updated>2013-04-26T13:15:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely</id>
+    <content type="html"><![CDATA[<p><img class="center" src="/images/posts/lawson_printing0.png"></p>
+
+<p>This is a short tutorial about how to access and send jobs to the printers on the Purdue CS Network using a Mac.</p>
+
+<!-- more -->
+
+
+<p>This is copied directly from the <a href="http://support.apple.com/kb/HT3049">Mac OS X Help pages</a>:</p>
+
+<p><strong>Mac OS X v10.5 or later</strong></p>
+
+<ol>
+<li>Choose <strong>System Preferences</strong> from the <strong>Apple</strong> menu.</li>
+<li>Choose <strong>Print &amp; Fax</strong> from the View menu.</li>
+<li>Click the <strong>+</strong> button to add a printer.</li>
+<li>Press the Control key while clicking the "Default" icon (or any other icon on the toolbar), then choose Customize Toolbar from the contextual menu that appears.</li>
+<li>Drag the Advanced (gear) icon to the toolbar.</li>
+<li>Click Done.</li>
+<li>Click the Advanced icon that was added to the toolbar.</li>
+<li>Choose Windows from the Type pop-up menu.</li>
+<li>In the URL field, type the printer's address in one of the following formats:</li>
+</ol>
+
+
+<blockquote><p>smb://cups.cs.purdue.edu/&lt;printer_name></p></blockquote>
+
+<ol>
+<li>In the Name field, type the name you would like to use for this printer in Mac OS X.</li>
+<li>In the Use field, choose 'Generic PostScript Printer'</li>
+<li>Click Add.</li>
+</ol>
+
+
+<p><img class="center" src="/images/posts/lawson_printing1.png"></p>
+]]></content>
+  </entry>
+  
+</feed>

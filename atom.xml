@@ -1,0 +1,1501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Quality of Service in Tomato]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/10/quality-of-service-in-tomato/"/>
+    <updated>2013-10-01T19:22:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/10/quality-of-service-in-tomato</id>
+    <content type="html"><![CDATA[<p><a href="http://www.polarcloud.com/tomato">Tomato</a> is an open-source router firmware for many of today&#8217;s routers. I have it installed on my Asus RT-N16 router, and I love it. I&#8217;ve had it running on the router for more than two years, but I just recently discovered one of its best features, Quality of Service.</p>
+
+<p>In a nutshell, Quality of Service in a router prioritizes certain traffic over other traffic depending on what kind it is and it can limit the overall bandwidth of connections to and from the Internet. The benefit of this is so that roommate who always torrents won&#8217;t have a direct affect on how fast your Internet browsing is since the torrent download would have a lower priority.</p>
+
+<!-- more -->
+
+
+<p>Now, my QoS has a very simple rulebook. I live in an apartment with 3 other roommates, and the only time problems arise is when Netflix is being used or the games from NBA.com are being streamed. I also torrent a little (Raspberry Pi and Ubuntu installation iso&#8217;s), so I made sure to limit myself on those downloads as well. If you want a definitive guide about how to set up the QoS settings, follow the link below. It is a lengthy read.</p>
+
+<p><a href="http://tomatousb.org/tut:using-tomato-s-qos-system">Using Tomato&#8217;s QOS System</a></p>
+
+<h3>How to set it up in Tomato</h3>
+
+<ol>
+<li><p>Go to <a href="http://speedtest.net">Speedtest.net</a> and get record your Internet speed. Mine is below.</p>
+
+<p> <img class="center" src="http://tyhoff.github.com/images/posts/speedtest.png"></p>
+
+<p> My bandwidth is approximately 25 Mbit/s downlink and 6 Mbit/s uplink. This is equivalent to 25,000 kbit/s and 6,000 kbit/s (You&#8217;ll need this for the next step).</p></li>
+<li><p>Next, navigate to your Tomato router configuration website, and in the left menu, click &#8220;QoS -> Basic Settings&#8221;.</p></li>
+<li><p>Under the section Outbound Rate / Limit, fill in the Max Bandwidth, which is your uplink speed from your Speedtest.net multiplied by 70-80%. Make sure to convert it to kbit/s.</p></li>
+<li><p>Under the section Inbound / Limit, fill in the Max Bandwidth, which is your downlink speed from your Speedtest.net multiplied by 70-80%. Make sure to convert it to kbit/s.</p></li>
+<li><p>Within both sections, you will find classifications for different types of traffic (high, medium, low, etc). In my setup, I only used High, Medium, and Low to keep it simple. Each section got an appropriate amount of bandwidth percentage I felt was necessary. In Outbound, the left column is the minimum and the right is the maximum. Under Inbound, the only column is maximum. Decide on how you&#8217;ll prioritize your traffic using the dropdown menus. Mine is below.</p>
+
+<ul>
+<li>High : HTTP traffic and DNS requests (Internet browsing)</li>
+<li>Medium: HTTP Downloads (Netflix, NBA, direct downloads)</li>
+<li>Low: Bittorrent</li>
+</ul>
+</li>
+<li><p>Click Save</p></li>
+<li><p>Click &#8220;Classification&#8221; in the left menu.</p>
+
+<p> <img class="center" src="http://tyhoff.github.com/images/posts/tomato_qos1.png"></p></li>
+<li><p>Fill in the chart with the things you would like to prioritize and limit.</p>
+
+<p> <img class="center" src="http://tyhoff.github.com/images/posts/tomato_qos2.png"></p></li>
+<li><p>Click Save</p></li>
+<li><p>Go back to &#8220;Basic Settings&#8221; and click Enable at the top.</p></li>
+<li><p>Click Save.</p></li>
+</ol>
+
+
+<p>You now have a useful Tomato QoS setup. Make sure to experiment with it so you get the best results.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Sleepwatcher : Run Script on Sleep]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation/"/>
+    <updated>2013-09-05T15:31:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation</id>
+    <content type="html"><![CDATA[<p><a href="http://www.bernhard-baehr.de/">Sleepwatcher</a> is a Mac OS X background daemon that can trigger a script to run when various power related events occur, such as the laptop sleeping or waking up, the screen dimming, or power adapter being connected or disconnected.</p>
+
+<p>On my personal laptop, I have an AppleScript set up within sleepwatcher that mutes the audio each time the laptop goes to sleep. This is to prevent accidental audio playing during meetings and classes.</p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<p>Below is setup script for sleepwatcher that I have written that installs it automatically as a system wise daemon.</p>
+
+<figure class='code'><figcaption><span> (sleepwatcher.sh)</span> <a href='http://tyhoff.github.com/downloads/code/sleepwatcher.sh'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/bash</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># acquire sudo at the beginning</span>
+</span><span class='line'>sudo -v
+</span><span class='line'>
+</span><span class='line'><span class="c"># Keep-alive: update existing `sudo` time stamp until `.osx` has finished</span>
+</span><span class='line'><span class="k">while </span><span class="nb">true</span>; <span class="k">do </span>sudo -n <span class="nb">true</span>; sleep 60; <span class="nb">kill</span> -0 <span class="s2">&quot;$$&quot;</span> <span class="o">||</span> <span class="nb">exit</span>; <span class="k">done </span>2&gt;/dev/null &amp;
+</span><span class='line'>
+</span><span class='line'><span class="c"># unload launch agents</span>
+</span><span class='line'>sudo launchctl unload /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>launchctl unload ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove plist launchagents</span>
+</span><span class='line'>sudo rm -f /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>rm -f ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove executable and man files</span>
+</span><span class='line'>sudo rm -f /usr/local/sbin/sleepwatcher
+</span><span class='line'>sudo rm -f /usr/local/share/man/man8/sleepwatcher.8
+</span><span class='line'>
+</span><span class='line'><span class="c"># download sleepwatcher package, untar, and cd into directory</span>
+</span><span class='line'>curl --remote-name <span class="s2">&quot;http://www.bernhard-baehr.de/sleepwatcher_2.2.tgz&quot;</span>
+</span><span class='line'>tar xvzf sleepwatcher_2.2.tgz 2&gt;/dev/null
+</span><span class='line'><span class="nb">cd </span>sleepwatcher_2.2
+</span><span class='line'>
+</span><span class='line'><span class="c"># create folders necessary for installation</span>
+</span><span class='line'>sudo mkdir -p /usr/local/sbin /usr/local/share/man/man8
+</span><span class='line'>
+</span><span class='line'><span class="c"># move files into installation folders</span>
+</span><span class='line'>sudo cp sleepwatcher /usr/local/sbin
+</span><span class='line'>sudo cp sleepwatcher.8 /usr/local/share/man/man8
+</span><span class='line'>sudo cp config/de.bernhard-baehr.sleepwatcher-20compatibility.plist /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'>sleep 1
+</span><span class='line'>
+</span><span class='line'><span class="c"># load launch agent</span>
+</span><span class='line'>sudo launchctl load -w -F /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># create script in local user directory and make them executable</span>
+</span><span class='line'>sudo touch /etc/rc.wakeup
+</span><span class='line'>sudo touch /etc/rc.sleep
+</span><span class='line'>sudo chmod +x /etc/rc.sleep /etc/rc.wakeup
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The script begins with deleting any old version of sleepwatcher on the computer. It them moves onto downloading the package and copying the files into the appropriate places. It loads the launch daemon then creates two files, <code>/etc/rc.sleep</code> and <code>/etc/rc.wakeup</code>. These get run at their respective times, when the laptop is going to sleep or waking up.</p>
+
+<p>My personal <code>/etc/rc.wakeup</code> script is shown below. All it does is run the short AppleScript command of setting the volume to zero. To get this functionality on your computer, just copy the code below into your own <code>/etc/rc.wakeup</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/rc.wakeup</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>osascript -e <span class="s1">&#39;set volume 0&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Other possible uses for sleepwatcher include updating a DNS record on wakeup, opening up specific applications for a user, and of course running another script of the user&#8217;s choice.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Purdue Dining Court API]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/purdue-dining-court-api/"/>
+    <updated>2013-04-30T16:58:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/purdue-dining-court-api</id>
+    <content type="html"><![CDATA[<p>To access the Purdue Dining Court XML API use this format</p>
+
+<blockquote><p>http://api.hfs.purdue.edu/menus/v1/locations/&lt;Dining Court>/MM-DD-YYYY</p></blockquote>
+
+<p>where <code>&lt;Dining Court&gt;</code> is from the list below</p>
+
+<ul>
+<li>Earhart</li>
+<li>Ford</li>
+<li>Hillenbrand</li>
+<li>Wiley</li>
+<li>Windsor</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Messages : Change cmd + delete behavior]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/"/>
+    <updated>2013-04-28T12:22:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior</id>
+    <content type="html"><![CDATA[<p><img class="center" src="http://tyhoff.github.com/images/posts/messages_delete0.png"></p>
+
+<p>One annoying thing in Mountain Lion&#8217;s Messages.app application is that the shortcut <code>command + delete</code> is mapped to &#8220;Close Conversation&#8221; instead of deleting the current line of text. This fix to this is very simple.</p>
+
+<!-- more -->
+
+
+<br>
+
+
+<p>We are going to change the shortcut for the &#8220;Close Conversation&#8230;&#8221; action to something that&#8217;s not <code>command + delete</code>.</p>
+
+<ol>
+<li>Choose <strong>System Preferences</strong> from the <strong>Apple</strong> menu.</li>
+<li>Choose <strong>Keyboard</strong> from the View menu.</li>
+<li>At the top, choose the <strong>Keyboard Shortcuts</strong> tab.</li>
+<li>In the left box, click Application Shortcuts.</li>
+<li>At the bottom of the right box, click the <strong>+</strong> sign.</li>
+<li>Fill in the form as shown below in the image.</li>
+<li>Click <strong>Add</strong>.</li>
+<li>Done! Now when you go into messages, you&#8217;ll have the usual <code>command + delete</code> behavior.</li>
+</ol>
+
+
+<p><img class="center" src="http://tyhoff.github.com/images/posts/messages_delete2.png"></p>
+
+<blockquote><p>Note: The keyboard shortcut given above is <code>shift + command + D</code></p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Access Purdue CS printers remotely]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely/"/>
+    <updated>2013-04-26T13:15:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely</id>
+    <content type="html"><![CDATA[<p><img class="center" src="http://tyhoff.github.com/images/posts/lawson_printing0.png"></p>
+
+<p>This is a short tutorial about how to access and send jobs to the printers on the Purdue CS Network using a Mac.</p>
+
+<!-- more -->
+
+
+<p>This is copied directly from the <a href="http://support.apple.com/kb/HT3049">Mac OS X Help pages</a>:</p>
+
+<p><strong>Mac OS X v10.5 or later</strong></p>
+
+<ol>
+<li>Choose <strong>System Preferences</strong> from the <strong>Apple</strong> menu.</li>
+<li>Choose <strong>Print &amp; Fax</strong> from the View menu.</li>
+<li>Click the <strong>+</strong> button to add a printer.</li>
+<li>Press the Control key while clicking the &#8220;Default&#8221; icon (or any other icon on the toolbar), then choose Customize Toolbar from the contextual menu that appears.</li>
+<li>Drag the Advanced (gear) icon to the toolbar.</li>
+<li>Click Done.</li>
+<li>Click the Advanced icon that was added to the toolbar.</li>
+<li>Choose Windows from the Type pop-up menu.</li>
+<li>In the URL field, type the printer&#8217;s address in one of the following formats:</li>
+</ol>
+
+
+<blockquote><p>smb://cups.cs.purdue.edu/&lt;printer_name></p></blockquote>
+
+<ol>
+<li>In the Name field, type the name you would like to use for this printer in Mac OS X.</li>
+<li>In the Use field, choose &#8216;Generic PostScript Printer&#8217;</li>
+<li>Click Add.</li>
+</ol>
+
+
+<p><img class="center" src="http://tyhoff.github.com/images/posts/lawson_printing1.png"></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[My GeekTool Setup]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/09/my-geektool-setup/"/>
+    <updated>2012-09-13T16:49:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/09/my-geektool-setup</id>
+    <content type="html"><![CDATA[<p>My GeekTool setup is meant strictly for productivity. There are no pretty pictures, no cool meters or text or color. It is in a monospace font that allows for simple formatting, and it gets the job done&#8230;well. Here it is:</p>
+
+<p><img class="center" src="http://tyhoff.github.com/images/posts/geektool.png"></p>
+
+<!-- more -->
+
+
+<p>The GeekTool picture above has the following elements:</p>
+
+<ul>
+<li>Shuffle status of iTunes on the current playlist</li>
+<li>iTunes current volume</li>
+<li>Hard drive space remaining on internal SSD</li>
+<li>CPU top 2 processes</li>
+<li>Fan speed and CPU temperature</li>
+<li>Current iTunes song</li>
+</ul>
+
+
+<p>I can&#8217;t take a screenshot of my entire desktop, because the resolution on the MBPr is too large, but here is an old image.</p>
+
+<p><a href="http://i.imgur.com/IXoU9.png"><img class="center" src="http://i.imgur.com/IXoU9.png" title="Alt text" ></a></p>
+
+<p>The reason for this setup is so that I can always see my GeekTool information. If I maximize Chrome or any other application, the Dock prevents it from maximizing the entire screen, leaving the black sliver with my GeekTool in sight. I can always know if a process is consuming too much CPU, if my computer is getting hot, and the current song.</p>
+
+<h2>How To - AppleScript</h2>
+
+<p>AppleScript is needed for some GeekTool scripts because it allows easy interfacing with applications to get data to display. The two examples below show the internal iTunes volume and the current playing song.</p>
+
+<br>
+
+
+<h3>iTunes Volume</h3>
+
+<p>The first AppleScript we will look at the percent status of the internal iTunes volume. It is nothing too fancy.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if appIsRunning("iTunes") then
+</span><span class='line'>  tell application "iTunes"
+</span><span class='line'>      "iTunes:  " & sound volume & "%"
+</span><span class='line'>  end tell
+</span><span class='line'>end if
+</span><span class='line'>
+</span><span class='line'># method that checks if the application is running
+</span><span class='line'>on appIsRunning(appName)
+</span><span class='line'>  tell application "System Events" to (name of processes) contains appName
+</span><span class='line'>end appIsRunning</span></code></pre></td></tr></table></div></figure>
+
+
+<br>
+
+
+<h3>Current Song</h3>
+
+<p>A more complicated one is the current song status.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if not appIsRunning("BetterTouchTool") then
+</span><span class='line'>  tell application "BetterTouchTool" to activate
+</span><span class='line'>end if
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>if appIsRunning("iTunes") then
+</span><span class='line'>  tell application "iTunes"
+</span><span class='line'>      
+</span><span class='line'>      if player state is paused then
+</span><span class='line'>          name of current track & "
+</span><span class='line'>" & artist of current track & "
+</span><span class='line'>" & album of current track & " | " & (round (((player position) / (duration of current track)) * 100)) & "% - P"
+</span><span class='line'>          
+</span><span class='line'>      else if player state is not stopped and player state is playing then
+</span><span class='line'>          name of current track & "
+</span><span class='line'>" & artist of current track & "
+</span><span class='line'>" & album of current track & " | " & (round (((player position) / (duration of current track)) * 100)) & "%"
+</span><span class='line'>      end if
+</span><span class='line'>      
+</span><span class='line'>      
+</span><span class='line'>  end tell
+</span><span class='line'>end if
+</span><span class='line'>
+</span><span class='line'>on appIsRunning(appName)
+</span><span class='line'>  tell application "System Events" to (name of processes) contains appName
+</span><span class='line'>end appIsRunning</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, pasting these isn&#8217;t helping much. It does however give you an idea about what AppleScript is and possibliy gives you an idea of what can be accomplished. This is a GeekTool thread, so I am going to finish out with how to set up GeekTool specifically.</p>
+
+<h2>How To - GeekTool</h2>
+
+<ol>
+<li>Download and install <a href="http://itunes.apple.com/us/app/geektool/id456877552?mt=12">GeekTool</a> from the Mac App Store.</li>
+<li>Browse through the <a href="http://www.macosxtips.co.uk/geeklets/">Geeklets</a> webpage to get some ideas.</li>
+<li>Continue scrolling and download ALL THE LINKS!</li>
+</ol>
+
+
+<h4>AppleScripts</h4>
+
+<p>To use these, download an AppleScript, place it in a folder in which it will never be moved. I store my AppleScripts in <code>~/Documents/Scripts/</code>.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the &#8216;command&#8217; box, put</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>osascript /path/to/file.scpt
+</span><span class='line'>
+</span><span class='line'><span class="c">#in my case</span>
+</span><span class='line'>osascript ~/Documents/Scripts/iTunesvol.scpt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://tyhoff.github.com/downloads/geektool/iTunesvol.scpt">iTunesvol.scpt</a> - outputs the current internal iTunes volume.</p>
+
+<p><a href="http://tyhoff.github.com/downloads/geektool/shuffstatus.scpt">shuffstatus.scpt</a> - outputs &#8216;Yes&#8217; or &#8216;No&#8217; depending on shuffle status of current playlist.</p>
+
+<p><a href="http://tyhoff.github.com/downloads/geektool/currentsong.scpt">currentsong.scpt</a> - outputs information about current playing song in iTunes.</p>
+
+<br>
+
+
+<h4>Fan Speeds / Internal Temperatures</h4>
+
+<p>This next file is an application that is run with a terminal command, or in our case, through GeekTool. Place it in a place that you won&#8217;t ever need to move it.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the &#8216;command&#8217; box, put</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/path/to/fans_tempsMonitor
+</span><span class='line'>
+</span><span class='line'><span class="c">#example</span>
+</span><span class='line'>~/Documents/Scripts/fans_tempsMonitor
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If that doesn&#8217;t work, then you may need to execute this command before it.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>chmod +x /path/to/fans_tempsMonitor
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://tyhoff.github.com/downloads/geektool/fans_tempsMonitor">fans_tempsMonitor</a> - shell application that outputs fan speeds and internal computer temperatures.</p>
+
+<h4>Top CPU Processes</h4>
+
+<p>This one is easy. Just download the Geeklet, double click on it, and it will install automatically.</p>
+
+<p><a href="http://tyhoff.github.com/downloads/geektool/top.glet">top.glet</a> - Geeklet that outputs the 2 top processes by CPU %.</p>
+
+<h4>Tips and Hints</h4>
+
+<p>I use the font Monaco size 11. It is monospace, which makes it very easy to format and make everything stay in line. I use a generic black background with white text.</p>
+
+<p>The one thing I have noticed with other peoples&#8217; AppleScripts is that they use variables. I did not like this solution because the AppleScripts would store some type of temporary variable in them and it would change the file somehow. This caused Dropbox to need to sync the file each time the AppleScript was run.</p>
+
+<p>I solved this problem by not using variables. It is especially messy in current_song.scpt, but it works.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Identites in Mountain Lion's Mail.app]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/05/identites-in-mail-dot-app/"/>
+    <updated>2012-05-16T10:52:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/05/identites-in-mail-dot-app</id>
+    <content type="html"><![CDATA[<p>Identities, or E-mails aliases, allow someone to send emails through one SMTP server while using multiple E-mails addresses. This option is present in most of todays E-mails clients, except Apple&#8217;s Mail.app 5.0 option is hidden. There is a way to set up identities, but it will require a little bit of plist editing. I will give an example setup to make it easier to follow.</p>
+
+<!-- more -->
+
+
+<h2>First Steps</h2>
+
+<p>Before we do anything, let&#8217;s backup the file we will be editing.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cp ~/Library/Mail/V2/MailData/Accounts.plist ~/Library/Mail/V2/MailData/Accounts_backup.plist
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Listed below is a primary email and two extra ones.</p>
+
+<pre>
+Primary Gmail:   tyler@gmail.com
+1st extra email: tyler@hotmail.com
+2nd extra email: tyler.smith@yahoo.com
+</pre>
+
+
+<p>I would like to be able to send E-mailss using the last two addresses but only use the SMTP servers fo the primary Gmail account. To make this possible, please look below and make sure your mail &#8220;Accounts&#8221; page looks similar to the one below. Note that this is basically the default setup for a single Gmail account on Mail.app.
+</br>
+</br>
+<img class="center" src="http://tyhoff.github.com/images/posts/mail_accounts.png"></p>
+
+<p>The next step requires some plist editing. You are going to need to edit the file <code>~/Library/Mail/V2/MailData/Accounts.plist</code>. You can open it in Xcode if you have it or in a text editor. I will demonstrate both ways.</p>
+
+<h2>Xcode</h2>
+
+<p><img class="center" src="http://tyhoff.github.com/images/posts/xcode_plist.png">
+Notice the default E-mails that was set up in Mail is listed as the &#8220;Email Address&#8221;. Each alias has its own E-mails and name. Separate names are useful if you want to give your full name on some adresses and only your first on others.</p>
+
+<h2>Text Editor</h2>
+
+<p>Follow the format below for each new alias.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dict&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;key&gt;</span>alias<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;string&gt;</span>tyler@gmail.com<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;key&gt;</span>name<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;string&gt;</span>Tyler<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dict&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Below is just a section of the <code>Accounts.plist</code> file, but it is enough for you to know where to place the edits.</p>
+
+<figure class='code'><figcaption><span>/Library/Mail/V2/MailData/Accounts.plist</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;key&gt;</span>DaysBetweenSyncs<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;integer&gt;</span>1<span class="nt">&lt;/integer&gt;</span>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>DraftsMailboxName<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;string&gt;</span>Drafts<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>EmailAddresses<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;array&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;string&gt;</span>tyler@gmail.com<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;/array&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">&lt;!-- Below is the edited part --&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>EmailAliases<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;array&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;dict&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>alias<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>tyler@gmail.com<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>name<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>Tyler<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/dict&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;dict&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>alias<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>tyler@hotmail.com<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>name<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>Tyler S<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/dict&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;dict&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>alias<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>tyler.smith@yahoo.com<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;key&gt;</span>name<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;string&gt;</span>Tyler Smith<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/dict&gt;</span>
+</span><span class='line'><span class="nt">&lt;/array&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">&lt;!-- Above is the edited part --&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>FullUserName<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;string&gt;</span>Tyler Smith<span class="nt">&lt;/string&gt;</span>
+</span><span class='line'><span class="nt">&lt;key&gt;</span>GmailCapabilitiesSupport<span class="nt">&lt;/key&gt;</span>
+</span><span class='line'><span class="nt">&lt;integer&gt;</span>2<span class="nt">&lt;/integer&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You are now done. If you quit Mail and open a &#8220;New Message&#8221;, you will see an option to select multiple email addresses to send from, each with their own names.</p>
+
+<p><img class="center" src="http://tyhoff.github.com/images/posts/mail_goal.png"></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Install Dropbox - Ubuntu Headless]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless/"/>
+    <updated>2012-05-12T11:28:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless</id>
+    <content type="html"><![CDATA[<p>This guide is about how to install Dropbox and its CLI (command line interface) on an Ubuntu server. Specifically, I am using a BuyVM Ubuntu 11.10 VPS without a GUI. An important note is that Dropbox increased my RAM usage by ~150MB, even while idling. This installation is probably not suited for a computer with 256MB or less.</p>
+
+<!--more-->
+
+
+<p>The next two commands will download Dropbox and install it to the root of the home directory of the current user.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget -O ~/dropbox.tar.gz <span class="s2">&quot;http://www.dropbox.com/download/?plat=lnx.x86&quot;</span>
+</span><span class='line'>tar -xzvf ~/dropbox.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Start the daemon for the current user</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox-dist/dropboxd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What will happen now is the terminal will output a website URL that you will need to navigate to using an internet browser. This is to link the installation to your Dropbox account. YOU MUST LEAVE THE PROGRAM RUNNING WHILE GOING TO THE WEBSITE.</p>
+
+<p>Once you have finished this step, Dropbox will say is has been successful with linking. You may hit <code>CTRL-C</code> now to stop the program.</p>
+
+<p>Currently, we now have new folder, <code>~/Dropbox</code>.</p>
+
+<p>We are now going to install the CLI for Dropbox, because it will make our lives much easier.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget -O ~/.dropbox/dropbox.py <span class="s2">&quot;http://www.dropbox.com/download?dl=packages/dropbox.py&quot;</span>
+</span><span class='line'>chmod 755 ~/.dropbox/dropbox.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we need to start Dropbox, and let it initialize some of the folders and files so we can apply settings to them.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To have Dropbox start when the system is booted, we are going to edit the crontab. Usually, scripts are placed in init.d, but the script never worked for me on Ubuntu 11.10.</p>
+
+<p>Open the crontab by typing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>crontab -e
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Add <code>@reboot ~/.dropbox-dist/dropboxd</code> somewhere in the file on its own line.</p>
+
+<p>Make sure cron is configured correctly to start up on a reboot.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>update-rc.d cron defaults
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In my experience, it is now best to reboot the server. If I did not restart the computer now, I was not able to configure my Dropbox installation using the CLI we downloaded. It would always give me the error &#8220;Dropbox is not responding&#8221;</p>
+
+<p>To find out what the CLI can do, you can type</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py <span class="nb">help</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To exclude specific folders, you can type</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py exclude add ~/Dropbox/folder
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There you have it. Dropbox is now installed, it runs when the computer is booted using a cron command, and you can only sync the folders that you want.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Install Deluge - Ubuntu Headless]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/installing-deluge-headless/"/>
+    <updated>2012-04-11T00:41:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/installing-deluge-headless</id>
+    <content type="html"><![CDATA[<p>This guide is about how to install <a href="http://dev.deluge-torrent.org/wiki/About">Deluge</a>. More specifically, since this is going to be installed on an Ubuntu 11.10 VPS, only the daemon and Web UI are going to be installed because there is no need for a GUI. I will also cover how to set up the Thin Client so that you can remotely control the daemon using a native application on your client computer.</p>
+
+<h3>There are 3 parts to this guide</h3>
+
+<ol>
+<li>Installing the Daemon</li>
+<li>Setting up the Web UI</li>
+<li>Connecting using the Thin Client</li>
+</ol>
+
+
+<!--more-->
+
+
+<h3>Installing the Daemon</h3>
+
+<p>We are going to add the Deluge repository, because the version of Deluge located in the default one is usually outdated. Notice <code>deluge</code> isn&#8217;t included here because we do not want the GUI version of deluge, only the daemon and Web UI.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo add-apt-repository ppa:deluge-team/ppa
+</span><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install deluged deluge-webui deluge-console
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the <code>add-apt-repository</code> command did not work, run the following code and try then again.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get install python-software-properties
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To run the daemon when the computer boots, you must copy the following script to <code>/etc/default/deluge-daemon</code>. You need to add the username that the program is to be run as between the quotation marks after <code>DELUGED_USER</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/default/deluge-daemon</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Configuration for /etc/init.d/deluge-daemon</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># The init.d script will only run if this variable non-empty.</span>
+</span><span class='line'><span class="nv">DELUGED_USER</span><span class="o">=</span><span class="s2">&quot;&quot;</span>             <span class="c"># !!!CHANGE THIS!!!!</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Should we run at startup?</span>
+</span><span class='line'><span class="nv">RUN_AT_STARTUP</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You need to place the following script in <code>/etc/init.d/deluge-daemon</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/init.d/deluge-daemon</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c">### BEGIN INIT INFO</span>
+</span><span class='line'><span class="c"># Provides:          deluge-daemon</span>
+</span><span class='line'><span class="c"># Required-Start:    $local_fs $remote_fs</span>
+</span><span class='line'><span class="c"># Required-Stop:     $local_fs $remote_fs</span>
+</span><span class='line'><span class="c"># Should-Start:      $network</span>
+</span><span class='line'><span class="c"># Should-Stop:       $network</span>
+</span><span class='line'><span class="c"># Default-Start:     2 3 4 5</span>
+</span><span class='line'><span class="c"># Default-Stop:      0 1 6</span>
+</span><span class='line'><span class="c"># Short-Description: Daemonized version of deluge and webui.</span>
+</span><span class='line'><span class="c"># Description:       Starts the deluge daemon with the user specified in</span>
+</span><span class='line'><span class="c">#                    /etc/default/deluge-daemon.</span>
+</span><span class='line'><span class="c">### END INIT INFO</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Author: Adolfo R. Brandes </span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+</span><span class='line'><span class="nv">DESC</span><span class="o">=</span><span class="s2">&quot;Deluge Daemon&quot;</span>
+</span><span class='line'><span class="nv">NAME1</span><span class="o">=</span><span class="s2">&quot;deluged&quot;</span>
+</span><span class='line'><span class="nv">NAME2</span><span class="o">=</span><span class="s2">&quot;deluge&quot;</span>
+</span><span class='line'><span class="nv">DAEMON1</span><span class="o">=</span>/usr/bin/deluged
+</span><span class='line'><span class="nv">DAEMON1_ARGS</span><span class="o">=</span><span class="s2">&quot;-d&quot;</span>             <span class="c"># Consult `man deluged` for more options</span>
+</span><span class='line'><span class="nv">DAEMON2</span><span class="o">=</span>/usr/bin/deluge-web
+</span><span class='line'><span class="nv">DAEMON2_ARGS</span><span class="o">=</span><span class="s2">&quot;&quot;</span>               <span class="c"># Consult `man deluge-web` for more options</span>
+</span><span class='line'><span class="nv">PIDFILE1</span><span class="o">=</span>/var/run/<span class="nv">$NAME1</span>.pid
+</span><span class='line'><span class="nv">PIDFILE2</span><span class="o">=</span>/var/run/<span class="nv">$NAME2</span>.pid
+</span><span class='line'><span class="nv">UMASK</span><span class="o">=</span>022                     <span class="c"># Change this to 0 if running deluged as its own user</span>
+</span><span class='line'><span class="nv">PKGNAME</span><span class="o">=</span>deluge-daemon
+</span><span class='line'><span class="nv">SCRIPTNAME</span><span class="o">=</span>/etc/init.d/<span class="nv">$PKGNAME</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Exit if the package is not installed</span>
+</span><span class='line'><span class="o">[</span> -x <span class="s2">&quot;$DAEMON1&quot;</span> -a -x <span class="s2">&quot;$DAEMON2&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'>
+</span><span class='line'><span class="c"># Read configuration variable file if it is present</span>
+</span><span class='line'><span class="o">[</span> -r /etc/default/<span class="nv">$PKGNAME</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> . /etc/default/<span class="nv">$PKGNAME</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Load the VERBOSE setting and other rcS variables</span>
+</span><span class='line'><span class="o">[</span> -f /etc/default/rcS <span class="o">]</span> <span class="o">&amp;&amp;</span> . /etc/default/rcS
+</span><span class='line'>
+</span><span class='line'><span class="c"># Define LSB log_* functions.</span>
+</span><span class='line'><span class="c"># Depend on lsb-base (&gt;= 3.0-6) to ensure that this file is present.</span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$RUN_AT_STARTUP&quot;</span> -o <span class="s2">&quot;$RUN_AT_STARTUP&quot;</span> !<span class="o">=</span> <span class="s2">&quot;YES&quot;</span> <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'><span class="k">   </span>log_warning_msg <span class="s2">&quot;Not starting $PKGNAME, edit /etc/default/$PKGNAME to start it.&quot;</span>
+</span><span class='line'>   <span class="nb">exit </span>0
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$DELUGED_USER&quot;</span> <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'><span class="k">    </span>log_warning_msg <span class="s2">&quot;Not starting $PKGNAME, DELUGED_USER not set in /etc/default/$PKGNAME.&quot;</span>
+</span><span class='line'>    <span class="nb">exit </span>0
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Function that starts the daemon/service</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'>do_start<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="c"># Return</span>
+</span><span class='line'>   <span class="c">#   0 if daemon has been started</span>
+</span><span class='line'>   <span class="c">#   1 if daemon was already running</span>
+</span><span class='line'>   <span class="c">#   2 if daemon could not be started</span>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE1</span> --exec <span class="nv">$DAEMON1</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> --test &gt; /dev/null
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE2</span> --exec <span class="nv">$DAEMON2</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> --test &gt; /dev/null
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="k">return </span>1
+</span><span class='line'>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE1</span> --make-pidfile --exec <span class="nv">$DAEMON1</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> -- <span class="nv">$DAEMON1_ARGS</span>
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>        sleep 2
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE2</span> --make-pidfile --exec <span class="nv">$DAEMON2</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> -- <span class="nv">$DAEMON2_ARGS</span>
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="k">return </span>2
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Function that stops the daemon/service</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'>do_stop<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="c"># Return</span>
+</span><span class='line'>   <span class="c">#   0 if daemon has been stopped</span>
+</span><span class='line'>   <span class="c">#   1 if daemon was already stopped</span>
+</span><span class='line'>   <span class="c">#   2 if daemon could not be stopped</span>
+</span><span class='line'>   <span class="c">#   other if a failure occurred</span>
+</span><span class='line'>
+</span><span class='line'>   start-stop-daemon --stop --quiet --retry<span class="o">=</span>TERM/30/KILL/5 --user <span class="nv">$DELUGED_USER</span> --pidfile <span class="nv">$PIDFILE2</span>
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   start-stop-daemon --stop --quiet --retry<span class="o">=</span>TERM/30/KILL/5 --user <span class="nv">$DELUGED_USER</span> --pidfile <span class="nv">$PIDFILE1</span>
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span> -o <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>2
+</span><span class='line'>
+</span><span class='line'>   rm -f <span class="nv">$PIDFILE1</span> <span class="nv">$PIDFILE2</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>0 <span class="o">||</span> <span class="k">return </span>1
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">case</span> <span class="s2">&quot;$1&quot;</span> in
+</span><span class='line'>  start<span class="o">)</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_daemon_msg <span class="s2">&quot;Starting $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_start
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>      0|1<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 0 ;;
+</span><span class='line'>      2<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 1 ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  stop<span class="o">)</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_daemon_msg <span class="s2">&quot;Stopping $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_stop
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>      0|1<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 0 ;;
+</span><span class='line'>      2<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 1 ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  restart|force-reload<span class="o">)</span>
+</span><span class='line'>   log_daemon_msg <span class="s2">&quot;Restarting $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_stop
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>     0|1<span class="o">)</span>
+</span><span class='line'>      do_start
+</span><span class='line'>      <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>         0<span class="o">)</span> log_end_msg 0 ;;
+</span><span class='line'>         1<span class="o">)</span> log_end_msg 1 ;; <span class="c"># Old process is still running</span>
+</span><span class='line'>         *<span class="o">)</span> log_end_msg 1 ;; <span class="c"># Failed to start</span>
+</span><span class='line'>      <span class="k">esac</span>
+</span><span class='line'>      ;;
+</span><span class='line'>     *<span class="o">)</span>
+</span><span class='line'>        <span class="c"># Failed to stop</span>
+</span><span class='line'>      log_end_msg 1
+</span><span class='line'>      ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  *<span class="o">)</span>
+</span><span class='line'>   <span class="nb">echo</span> <span class="s2">&quot;Usage: $SCRIPTNAME {start|stop|restart|force-reload}&quot;</span> &gt;&amp;2
+</span><span class='line'>   <span class="nb">exit </span>3
+</span><span class='line'>   ;;
+</span><span class='line'><span class="k">esac</span>
+</span><span class='line'>
+</span><span class='line'>:
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Make the script executable and set to run on startup.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo chmod 755 /etc/init.d/deluge-daemon
+</span><span class='line'>sudo update-rc.d deluge-daemon defaults
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This following two commands are used to initialize files before editing them in the later steps.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo invoke-rc.d deluge-daemon start
+</span><span class='line'>sudo /etc/init.d/deluge-daemon stop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To be able to access the daemon from the local Deluge application on your computer, we need to enable remote access. You must now run <code>deluge-console</code> from the user prompt that you want to run Deluge as (same as the username you put in the script above).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>deluge-console
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once inside the console type the following</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>config -s allow_remote True
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To configure a username and password for login to the Deluge server, use the following command, changing out the values to make it your own username and password. These are not related in any way to the Ubuntu username and password.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;username:password:10&quot;</span> &gt;&gt; ~/.config/deluge/auth
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Start the daemon, and everything should be configured</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/init.d/deluge-daemon start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Ending Words</h3>
+
+<p>You are now able to access the WebUI at <code>http://your.server.ip:8112</code>. The default password is deluge.</p>
+
+<p>You are now able to login to the Deluge daemon using a thin client at <code>your.server.ip</code> and port <code>58846</code>. The username and password are what you set it as above.</p>
+
+<p>You can change all of the settings using the preferences in the thin client, such as ports and default directories.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Remove Apache2 - Install NGINX]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx/"/>
+    <updated>2012-04-10T22:21:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx</id>
+    <content type="html"><![CDATA[<p><img class="center" src="http://tyhoff.github.com/images/posts/nginx.png"></p>
+
+<p>So you want to remove Apache2 in favor of NGINX? You&#8217;ve come to the right place. This is a quick and to the point guide that should get you up and running with NGINX in no time. I am using Ubuntu 11.10 on a VPS, but this should work for most installations of Ubuntu. NOTE: This guide does not include how to install PHP. I did not need it so I did not end up installing it.</p>
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Remove Apache2</h3>
+
+<p>This first command will delete everything apache2 on the system. The second will delete the apache2 directory</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get remove --purge apache2 apache2-utils
+</span><span class='line'><span class="nv">$ </span>sudo rm -rf /etc/apache2
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Install NGINX</h3>
+
+<p>The following commands will add NGINX&#8217;s repository so that you can install the most updated version.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo add-apt-repository ppa:nginx/stable
+</span><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install nginx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you get an error on the add-apt-repository command, execute the following command</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get install python-software-properties
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Configure NGINX</h3>
+
+<p>Last thing we will need to do is to go to the configuration file for NGINX. It is located in <code>/etc/nginx/sites-available/default</code> This section is only the first part of the config file.</p>
+
+<figure class='code'><figcaption><span>/etc/nginx/sites-available/default</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>server {
+</span><span class='line'>  #listen   80; ## listen for ipv4; this line is default and implied
+</span><span class='line'>  #listen   [::]:80 default ipv6only=on; ## listen for ipv6
+</span><span class='line'>
+</span><span class='line'>  root /path/to/website/dir;
+</span><span class='line'>  index index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  # Make site accessible from http://localhost/
+</span><span class='line'>  server_name localhost;
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>      # First attempt to serve request as file, then
+</span><span class='line'>      # as directory, then fall back to index.html
+</span><span class='line'>      try_files $uri $uri/ /index.html;
+</span><span class='line'>      # Uncomment to enable naxsi on this location
+</span><span class='line'>      # include /etc/nginx/naxsi.rules
+</span><span class='line'>  }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You will need to change lines 5 and 6. Line 5 will need the path to the directory of your website, and line 6 will be the types of index files located in the directory, whether they are index.php, .html, .htm etc.</p>
+
+<p>To restart NGINX and make your changes take effect, the command to restart the service is necessary.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/nginx start
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Enjoy</h3>
+
+<p>There you have it. The simplest guide I can make that shows how to uninstall Apache2 and install NGINX.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress: The Guide]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/octopress-the-guide/"/>
+    <updated>2012-04-10T22:18:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/octopress-the-guide</id>
+    <content type="html"><![CDATA[<p>Octopress is a blogging framework that doesn&#8217;t use MySQL or PHP, and allows for quick, focused writing. It brings coders and hackers back to their roots. The benefits of <a href="http://octopress.org/">Octopress</a> are numerous, but you are encouraged to go to its website and learn more.</p>
+
+<p>The goal of this post is to allow anyone with a minimal programming background to set up and maintain an  blog. This website is run on an Ubuntu 11.10 VPS, so this guide will for Ubuntu installations. I opted to go with the all in one approach, everything that generates the website is located on the server.</p>
+
+<h3>There are 4 parts to this guide.</h3>
+
+<ol>
+<li>Installing RVM and Ruby</li>
+<li>Installing Octopress</li>
+<li>Configuring Apache</li>
+<li>How to start blogging</li>
+</ol>
+
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Installing RVM and Ruby</h3>
+
+<p>RVM is the Ruby Version Manager. I have found that RVM is easier to install than rbenv, but others might disagree.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo bash -s stable &lt; &lt;<span class="o">(</span>curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer<span class="o">)</span>
+</span><span class='line'><span class="nv">$ </span><span class="nb">umask </span>g+w
+</span><span class='line'><span class="nv">$ </span><span class="nb">source</span> /etc/profile.d/rvm.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This next command will install all of the dependencies of Ruby.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Replacing &#8220;user&#8221; with your UNIX login name will allow the user to edit the files in <code>/usr/local/rvm</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo chown -R user:user /usr/local/rvm
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next, now that you have RVM installed, we can go ahead and install Ruby and set version 1.9.3 as the default version. (switch 1.9.3 with the current version if changed). The following command will take 15-20 minutes, so don&#8217;t be afraid if it takes a while to finish.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rvm install 1.9.3 <span class="o">&amp;&amp;</span> rvm use 1.9.3
+</span><span class='line'><span class="nv">$ </span>ruby -v
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last command there should show <code>ruby 1.9.3p125</code> or something similar.</p>
+
+<br />
+
+
+<h3>Installing Octopress</h3>
+
+<p>If at anytime during the next few steps RVM asks if you would like to trust the .rvmc file, you can safely say &#8220;yes&#8221;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span>
+</span><span class='line'><span class="nv">$ </span>git clone git://github.com/imathis/octopress.git octopress
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>octopress
+</span><span class='line'><span class="nv">$ </span>gem install bundler
+</span><span class='line'><span class="nv">$ </span>bundle install
+</span><span class='line'><span class="nv">$ </span>rake install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This final step to get Octopress to install. This will build the files that are located in <code>/source/</code> and publish them into the <code>/public/</code> folder.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake generate
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br />
+
+
+<h3>Configuring Apache</h3>
+
+<p>I am going to assume that Apache is already working, meaning that if you typed in <code>127.0.0.1</code> or <code>localhost</code> into the browser of your server, or by typing in the IP of your VPS, you should see a &#8220;It Works&#8221; page.</p>
+
+<p>The first and only step is to change what directory Apache looks in to display the webpage. I am going to create a new webpage configuration with the name <code>mysite</code>. You may name it how you like and change out the name when applicable.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /etc/apache2/sites-available
+</span><span class='line'><span class="nv">$ </span>sudo cp default mysite
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you have to open the new configuration file with your favorite editor. I am going to use vim</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo vim mysite
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I put comments above the two lines that need to be changed. You need to change <code>/var/www</code> to the path of the Octopress public folder, which is most likely <code>/home/user/octopress/public</code>, where &#8220;user&#8221; is your UNIX username.</p>
+
+<figure class='code'><figcaption><span>/etc/apache2/sites-available/mysite</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;VirtualHost</span> <span class="err">*:80</span><span class="nt">&gt;</span>
+</span><span class='line'>  ServerAdmin webmaster@localhost
+</span><span class='line'>
+</span><span class='line'>  <span class="c">&lt;!-- point the line below to Octopress&#39;s public folder --&gt;</span>
+</span><span class='line'>  DocumentRoot /path/to/octopress/public/folder
+</span><span class='line'>  <span class="nt">&lt;Directory</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      Options FollowSymLinks
+</span><span class='line'>      AllowOverride None
+</span><span class='line'>  <span class="nt">&lt;/Directory&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c">&lt;!-- point the line below to Octopress&#39;s public folder --&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;Directory</span> <span class="err">/path/to/octopress/public/folder</span> <span class="nt">&gt;</span>
+</span><span class='line'>      Options Indexes FollowSymLinks MultiViews
+</span><span class='line'>      AllowOverride None
+</span><span class='line'>      Order allow,deny
+</span><span class='line'>      allow from all
+</span><span class='line'>  <span class="nt">&lt;/Directory&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+</span><span class='line'>  <span class="nt">&lt;Directory</span> <span class="err">&quot;/usr/lib/cgi-bin&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      AllowOverride None
+</span><span class='line'>      Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+</span><span class='line'>      Order allow,deny
+</span><span class='line'>      Allow from all
+</span><span class='line'>  <span class="nt">&lt;/Directory&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  ErrorLog ${APACHE_LOG_DIR}/error.log
+</span><span class='line'>
+</span><span class='line'>  # Possible values include: debug, info, notice, warn, error, crit,
+</span><span class='line'>  # alert, emerg.
+</span><span class='line'>  LogLevel warn
+</span><span class='line'>
+</span><span class='line'>  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</span><span class='line'>
+</span><span class='line'>    Alias /doc/ &quot;/usr/share/doc/&quot;
+</span><span class='line'>    <span class="nt">&lt;Directory</span> <span class="err">&quot;/usr/share/doc/&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        Options Indexes MultiViews FollowSymLinks
+</span><span class='line'>        AllowOverride None
+</span><span class='line'>        Order deny,allow
+</span><span class='line'>        Deny from all
+</span><span class='line'>        Allow from 127.0.0.0/255.0.0.0 ::1/128
+</span><span class='line'>    <span class="nt">&lt;/Directory&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/VirtualHost&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The final thing to do is to restart Apache so that the changes show up</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo service apache2 reload
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There! Now if you go to the address of your webpage, you should see a generic Octopress page. If you don&#8217;t, leave a comment and we will see what we can do.</p>
+
+<br />
+
+
+<h3>How to start blogging</h3>
+
+<p>To insert a new post, type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake new_post<span class="o">[</span><span class="s2">&quot;post title&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will create a new file in the directory <code>/source/_posts/"date and name of post"</code>. You will need to edit this file using the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> syntax. It is quite simple to understand and learn.</p>
+
+<p>Each time you create a new post, you can use the following command to update the webpage and push any changes to the public folder.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake generate
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you want to learn more about how to manage posts and create pages, please visit the Octopress page <a href="http://octopress.org/docs/blogging/">Blogging Basics</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

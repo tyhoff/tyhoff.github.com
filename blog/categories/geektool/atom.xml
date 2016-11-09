@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: geektool | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/geektool/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My GeekTool Setup]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/09/my-geektool-setup/"/>
+    <updated>2012-09-13T16:49:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/09/my-geektool-setup</id>
+    <content type="html"><![CDATA[<p>My GeekTool setup is meant strictly for productivity. There are no pretty pictures, no cool meters or text or color. It is in a monospace font that allows for simple formatting, and it gets the job done...well. Here it is:</p>
+
+<p><img class="center" src="/images/posts/geektool.png"></p>
+
+<!-- more -->
+
+
+<p>The GeekTool picture above has the following elements:</p>
+
+<ul>
+<li>Shuffle status of iTunes on the current playlist</li>
+<li>iTunes current volume</li>
+<li>Hard drive space remaining on internal SSD</li>
+<li>CPU top 2 processes</li>
+<li>Fan speed and CPU temperature</li>
+<li>Current iTunes song</li>
+</ul>
+
+
+<p>I can't take a screenshot of my entire desktop, because the resolution on the MBPr is too large, but here is an old image.</p>
+
+<p><a href="http://i.imgur.com/IXoU9.png"><img class="center" src="http://i.imgur.com/IXoU9.png" title="Alt text" ></a></p>
+
+<p>The reason for this setup is so that I can always see my GeekTool information. If I maximize Chrome or any other application, the Dock prevents it from maximizing the entire screen, leaving the black sliver with my GeekTool in sight. I can always know if a process is consuming too much CPU, if my computer is getting hot, and the current song.</p>
+
+<h2>How To - AppleScript</h2>
+
+<p>AppleScript is needed for some GeekTool scripts because it allows easy interfacing with applications to get data to display. The two examples below show the internal iTunes volume and the current playing song.</p>
+
+<br>
+
+
+<h3>iTunes Volume</h3>
+
+<p>The first AppleScript we will look at the percent status of the internal iTunes volume. It is nothing too fancy.</p>
+
+<p>```
+if appIsRunning("iTunes") then</p>
+
+<pre><code>tell application "iTunes"
+    "iTunes:  " &amp; sound volume &amp; "%"
+end tell
+</code></pre>
+
+<p>end if</p>
+
+<h1>method that checks if the application is running</h1>
+
+<p>on appIsRunning(appName)</p>
+
+<pre><code>tell application "System Events" to (name of processes) contains appName
+</code></pre>
+
+<p>end appIsRunning
+```</p>
+
+<br>
+
+
+<h3>Current Song</h3>
+
+<p>A more complicated one is the current song status.
+```
+if not appIsRunning("BetterTouchTool") then</p>
+
+<pre><code>tell application "BetterTouchTool" to activate
+</code></pre>
+
+<p>end if</p>
+
+<p>if appIsRunning("iTunes") then</p>
+
+<pre><code>tell application "iTunes"
+
+    if player state is paused then
+        name of current track &amp; "
+</code></pre>
+
+<p>" &amp; artist of current track &amp; "
+" &amp; album of current track &amp; " | " &amp; (round (((player position) / (duration of current track)) * 100)) &amp; "% - P"</p>
+
+<pre><code>    else if player state is not stopped and player state is playing then
+        name of current track &amp; "
+</code></pre>
+
+<p>" &amp; artist of current track &amp; "
+" &amp; album of current track &amp; " | " &amp; (round (((player position) / (duration of current track)) * 100)) &amp; "%"</p>
+
+<pre><code>    end if
+
+
+end tell
+</code></pre>
+
+<p>end if</p>
+
+<p>on appIsRunning(appName)</p>
+
+<pre><code>tell application "System Events" to (name of processes) contains appName
+</code></pre>
+
+<p>end appIsRunning
+```</p>
+
+<p>Now, pasting these isn't helping much. It does however give you an idea about what AppleScript is and possibliy gives you an idea of what can be accomplished. This is a GeekTool thread, so I am going to finish out with how to set up GeekTool specifically.</p>
+
+<h2>How To - GeekTool</h2>
+
+<ol>
+<li>Download and install <a href="http://itunes.apple.com/us/app/geektool/id456877552?mt=12">GeekTool</a> from the Mac App Store.</li>
+<li>Browse through the <a href="http://www.macosxtips.co.uk/geeklets/">Geeklets</a> webpage to get some ideas.</li>
+<li>Continue scrolling and download ALL THE LINKS!</li>
+</ol>
+
+
+<h4>AppleScripts</h4>
+
+<p>To use these, download an AppleScript, place it in a folder in which it will never be moved. I store my AppleScripts in <code>~/Documents/Scripts/</code>.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the 'command' box, put
+```bash
+osascript /path/to/file.scpt</p>
+
+<h1>in my case</h1>
+
+<p>osascript ~/Documents/Scripts/iTunesvol.scpt
+```</p>
+
+<p><a href="/downloads/geektool/iTunesvol.scpt">iTunesvol.scpt</a> - outputs the current internal iTunes volume.</p>
+
+<p><a href="/downloads/geektool/shuffstatus.scpt">shuffstatus.scpt</a> - outputs 'Yes' or 'No' depending on shuffle status of current playlist.</p>
+
+<p><a href="/downloads/geektool/currentsong.scpt">currentsong.scpt</a> - outputs information about current playing song in iTunes.</p>
+
+<br>
+
+
+<h4>Fan Speeds / Internal Temperatures</h4>
+
+<p>This next file is an application that is run with a terminal command, or in our case, through GeekTool. Place it in a place that you won't ever need to move it.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the 'command' box, put
+```bash
+/path/to/fans_tempsMonitor</p>
+
+<h1>example</h1>
+
+<p>~/Documents/Scripts/fans_tempsMonitor
+```</p>
+
+<p>If that doesn't work, then you may need to execute this command before it.
+<code>bash
+chmod +x /path/to/fans_tempsMonitor
+</code></p>
+
+<p><a href="/downloads/geektool/fans_tempsMonitor">fans_tempsMonitor</a> - shell application that outputs fan speeds and internal computer temperatures.</p>
+
+<h4>Top CPU Processes</h4>
+
+<p>This one is easy. Just download the Geeklet, double click on it, and it will install automatically.</p>
+
+<p><a href="/downloads/geektool/top.glet">top.glet</a> - Geeklet that outputs the 2 top processes by CPU %.</p>
+
+<h4>Tips and Hints</h4>
+
+<p>I use the font Monaco size 11. It is monospace, which makes it very easy to format and make everything stay in line. I use a generic black background with white text.</p>
+
+<p>The one thing I have noticed with other peoples' AppleScripts is that they use variables. I did not like this solution because the AppleScripts would store some type of temporary variable in them and it would change the file somehow. This caused Dropbox to need to sync the file each time the AppleScript was run.</p>
+
+<p>I solved this problem by not using variables. It is especially messy in current_song.scpt, but it works.</p>
+]]></content>
+  </entry>
+  
+</feed>

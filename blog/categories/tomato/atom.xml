@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tomato | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/tomato/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Quality of Service in Tomato]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/10/quality-of-service-in-tomato/"/>
+    <updated>2013-10-01T19:22:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/10/quality-of-service-in-tomato</id>
+    <content type="html"><![CDATA[<p><a href="http://www.polarcloud.com/tomato">Tomato</a> is an open-source router firmware for many of today's routers. I have it installed on my Asus RT-N16 router, and I love it. I've had it running on the router for more than two years, but I just recently discovered one of its best features, Quality of Service.</p>
+
+<p>In a nutshell, Quality of Service in a router prioritizes certain traffic over other traffic depending on what kind it is and it can limit the overall bandwidth of connections to and from the Internet. The benefit of this is so that roommate who always torrents won't have a direct affect on how fast your Internet browsing is since the torrent download would have a lower priority.</p>
+
+<!-- more -->
+
+
+<p>Now, my QoS has a very simple rulebook. I live in an apartment with 3 other roommates, and the only time problems arise is when Netflix is being used or the games from NBA.com are being streamed. I also torrent a little (Raspberry Pi and Ubuntu installation iso's), so I made sure to limit myself on those downloads as well. If you want a definitive guide about how to set up the QoS settings, follow the link below. It is a lengthy read.</p>
+
+<p><a href="http://tomatousb.org/tut:using-tomato-s-qos-system">Using Tomato's QOS System</a></p>
+
+<h3>How to set it up in Tomato</h3>
+
+<ol>
+<li><p>Go to <a href="http://speedtest.net">Speedtest.net</a> and get record your Internet speed. Mine is below.</p>
+
+<p> <img class="center" src="/images/posts/speedtest.png"></p>
+
+<p> My bandwidth is approximately 25 Mbit/s downlink and 6 Mbit/s uplink. This is equivalent to 25,000 kbit/s and 6,000 kbit/s (You'll need this for the next step).</p></li>
+<li><p>Next, navigate to your Tomato router configuration website, and in the left menu, click "QoS -> Basic Settings".</p></li>
+<li><p>Under the section Outbound Rate / Limit, fill in the Max Bandwidth, which is your uplink speed from your Speedtest.net multiplied by 70-80%. Make sure to convert it to kbit/s.</p></li>
+<li><p>Under the section Inbound / Limit, fill in the Max Bandwidth, which is your downlink speed from your Speedtest.net multiplied by 70-80%. Make sure to convert it to kbit/s.</p></li>
+<li><p>Within both sections, you will find classifications for different types of traffic (high, medium, low, etc). In my setup, I only used High, Medium, and Low to keep it simple. Each section got an appropriate amount of bandwidth percentage I felt was necessary. In Outbound, the left column is the minimum and the right is the maximum. Under Inbound, the only column is maximum. Decide on how you'll prioritize your traffic using the dropdown menus. Mine is below.</p>
+
+<ul>
+<li>High : HTTP traffic and DNS requests (Internet browsing)</li>
+<li>Medium: HTTP Downloads (Netflix, NBA, direct downloads)</li>
+<li>Low: Bittorrent</li>
+</ul>
+</li>
+<li><p>Click Save</p></li>
+<li><p>Click "Classification" in the left menu.</p>
+
+<p> <img class="center" src="/images/posts/tomato_qos1.png"></p></li>
+<li><p>Fill in the chart with the things you would like to prioritize and limit.</p>
+
+<p> <img class="center" src="/images/posts/tomato_qos2.png"></p></li>
+<li><p>Click Save</p></li>
+<li><p>Go back to "Basic Settings" and click Enable at the top.</p></li>
+<li><p>Click Save.</p></li>
+</ol>
+
+
+<p>You now have a useful Tomato QoS setup. Make sure to experiment with it so you get the best results.</p>
+]]></content>
+  </entry>
+  
+</feed>

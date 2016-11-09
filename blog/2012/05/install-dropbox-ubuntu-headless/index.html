@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Install Dropbox - Ubuntu Headless - tyler hoffman</title>
+  <meta name="author" content="Tyler">
+
+  
+  <meta name="description" content="This guide is about how to install Dropbox and its CLI (command line interface) on an Ubuntu server. Specifically, I am using a BuyVM Ubuntu 11.10 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="tyler hoffman" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30753917-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">tyler hoffman</a></h1>
+  
+    <h2>my technological discoveries</h2>
+  
+  <div class="clear"></div>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tyhoff.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About Tyler</a></li>
+  <li><a href="/downloads/resume.pdf">Resume</a></li>
+  <li><a href="https://github.com/tyhoff">GitHub</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Install Dropbox - Ubuntu Headless</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-12T11:28:00-07:00" pubdate data-updated="true">May 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This guide is about how to install Dropbox and its CLI (command line interface) on an Ubuntu server. Specifically, I am using a BuyVM Ubuntu 11.10 VPS without a GUI. An important note is that Dropbox increased my RAM usage by ~150MB, even while idling. This installation is probably not suited for a computer with 256MB or less.</p>
+
+<!--more-->
+
+
+<p>The next two commands will download Dropbox and install it to the root of the home directory of the current user.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget -O ~/dropbox.tar.gz <span class="s2">&quot;http://www.dropbox.com/download/?plat=lnx.x86&quot;</span>
+</span><span class='line'>tar -xzvf ~/dropbox.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Start the daemon for the current user</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox-dist/dropboxd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What will happen now is the terminal will output a website URL that you will need to navigate to using an internet browser. This is to link the installation to your Dropbox account. YOU MUST LEAVE THE PROGRAM RUNNING WHILE GOING TO THE WEBSITE.</p>
+
+<p>Once you have finished this step, Dropbox will say is has been successful with linking. You may hit <code>CTRL-C</code> now to stop the program.</p>
+
+<p>Currently, we now have new folder, <code>~/Dropbox</code>.</p>
+
+<p>We are now going to install the CLI for Dropbox, because it will make our lives much easier.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget -O ~/.dropbox/dropbox.py <span class="s2">&quot;http://www.dropbox.com/download?dl=packages/dropbox.py&quot;</span>
+</span><span class='line'>chmod 755 ~/.dropbox/dropbox.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we need to start Dropbox, and let it initialize some of the folders and files so we can apply settings to them.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To have Dropbox start when the system is booted, we are going to edit the crontab. Usually, scripts are placed in init.d, but the script never worked for me on Ubuntu 11.10.</p>
+
+<p>Open the crontab by typing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>crontab -e
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Add <code>@reboot ~/.dropbox-dist/dropboxd</code> somewhere in the file on its own line.</p>
+
+<p>Make sure cron is configured correctly to start up on a reboot.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>update-rc.d cron defaults
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In my experience, it is now best to reboot the server. If I did not restart the computer now, I was not able to configure my Dropbox installation using the CLI we downloaded. It would always give me the error &#8220;Dropbox is not responding&#8221;</p>
+
+<p>To find out what the CLI can do, you can type</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py <span class="nb">help</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To exclude specific folders, you can type</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/.dropbox/dropbox.py exclude add ~/Dropbox/folder
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There you have it. Dropbox is now installed, it runs when the computer is booted using a cron command, and you can only sync the folders that you want.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tyler</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-12T11:28:00-07:00" pubdate data-updated="true">May 12<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/vps/'>vps</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless/" data-via="" data-counturl="http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left articlenav" href="/blog/2012/04/installing-deluge-headless/" title="Previous Post: Install Deluge - Ubuntu Headless">&laquo; Install Deluge - Ubuntu Headless</a>
+      
+      
+        <a class="basic-alignment right articlenav" href="/blog/2012/05/identites-in-mail-dot-app/" title="Next Post: Identites in Mountain Lion's Mail.app">Identites in Mountain Lion's Mail.app &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+  		My name is Tyler Hoffman, and I am a senior at Purdue University studying Computer Science.
+  </p>
+  <p>
+  		This webpage is a stockpile of many neat tricks and advice I've come across over the years.
+  </p>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/tyhoff">@tyhoff</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'tyhoff',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/quality-of-service-in-tomato/">Quality of Service in Tomato</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/sleepwatcher-power-event-driven-automation/">Sleepwatcher : Run Script on Sleep</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/purdue-dining-court-api/">Purdue Dining Court API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/">Messages : Change cmd + delete behavior</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/access-purdue-cs-printers-remotely/">Access Purdue CS printers remotely</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Tyler -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Theme by <a href="http://melandri.net/2012/07/23/darkstripes-octopress-theme-released/">Alessandro Melandri</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

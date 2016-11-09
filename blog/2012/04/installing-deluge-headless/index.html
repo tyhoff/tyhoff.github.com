@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Install Deluge - Ubuntu Headless - tyler hoffman</title>
+  <meta name="author" content="Tyler">
+
+  
+  <meta name="description" content="This guide is about how to install Deluge. More specifically, since this is going to be installed on an Ubuntu 11.10 VPS, only the daemon and Web UI &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tyhoff.github.com/blog/2012/04/installing-deluge-headless/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="tyler hoffman" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30753917-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">tyler hoffman</a></h1>
+  
+    <h2>my technological discoveries</h2>
+  
+  <div class="clear"></div>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tyhoff.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About Tyler</a></li>
+  <li><a href="/downloads/resume.pdf">Resume</a></li>
+  <li><a href="https://github.com/tyhoff">GitHub</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Install Deluge - Ubuntu Headless</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T00:41:00-07:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This guide is about how to install <a href="http://dev.deluge-torrent.org/wiki/About">Deluge</a>. More specifically, since this is going to be installed on an Ubuntu 11.10 VPS, only the daemon and Web UI are going to be installed because there is no need for a GUI. I will also cover how to set up the Thin Client so that you can remotely control the daemon using a native application on your client computer.</p>
+
+<h3>There are 3 parts to this guide</h3>
+
+<ol>
+<li>Installing the Daemon</li>
+<li>Setting up the Web UI</li>
+<li>Connecting using the Thin Client</li>
+</ol>
+
+
+<!--more-->
+
+
+<h3>Installing the Daemon</h3>
+
+<p>We are going to add the Deluge repository, because the version of Deluge located in the default one is usually outdated. Notice <code>deluge</code> isn&#8217;t included here because we do not want the GUI version of deluge, only the daemon and Web UI.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo add-apt-repository ppa:deluge-team/ppa
+</span><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install deluged deluge-webui deluge-console
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the <code>add-apt-repository</code> command did not work, run the following code and try then again.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get install python-software-properties
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To run the daemon when the computer boots, you must copy the following script to <code>/etc/default/deluge-daemon</code>. You need to add the username that the program is to be run as between the quotation marks after <code>DELUGED_USER</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/default/deluge-daemon</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Configuration for /etc/init.d/deluge-daemon</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># The init.d script will only run if this variable non-empty.</span>
+</span><span class='line'><span class="nv">DELUGED_USER</span><span class="o">=</span><span class="s2">&quot;&quot;</span>             <span class="c"># !!!CHANGE THIS!!!!</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Should we run at startup?</span>
+</span><span class='line'><span class="nv">RUN_AT_STARTUP</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You need to place the following script in <code>/etc/init.d/deluge-daemon</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/init.d/deluge-daemon</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c">### BEGIN INIT INFO</span>
+</span><span class='line'><span class="c"># Provides:          deluge-daemon</span>
+</span><span class='line'><span class="c"># Required-Start:    $local_fs $remote_fs</span>
+</span><span class='line'><span class="c"># Required-Stop:     $local_fs $remote_fs</span>
+</span><span class='line'><span class="c"># Should-Start:      $network</span>
+</span><span class='line'><span class="c"># Should-Stop:       $network</span>
+</span><span class='line'><span class="c"># Default-Start:     2 3 4 5</span>
+</span><span class='line'><span class="c"># Default-Stop:      0 1 6</span>
+</span><span class='line'><span class="c"># Short-Description: Daemonized version of deluge and webui.</span>
+</span><span class='line'><span class="c"># Description:       Starts the deluge daemon with the user specified in</span>
+</span><span class='line'><span class="c">#                    /etc/default/deluge-daemon.</span>
+</span><span class='line'><span class="c">### END INIT INFO</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Author: Adolfo R. Brandes </span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+</span><span class='line'><span class="nv">DESC</span><span class="o">=</span><span class="s2">&quot;Deluge Daemon&quot;</span>
+</span><span class='line'><span class="nv">NAME1</span><span class="o">=</span><span class="s2">&quot;deluged&quot;</span>
+</span><span class='line'><span class="nv">NAME2</span><span class="o">=</span><span class="s2">&quot;deluge&quot;</span>
+</span><span class='line'><span class="nv">DAEMON1</span><span class="o">=</span>/usr/bin/deluged
+</span><span class='line'><span class="nv">DAEMON1_ARGS</span><span class="o">=</span><span class="s2">&quot;-d&quot;</span>             <span class="c"># Consult `man deluged` for more options</span>
+</span><span class='line'><span class="nv">DAEMON2</span><span class="o">=</span>/usr/bin/deluge-web
+</span><span class='line'><span class="nv">DAEMON2_ARGS</span><span class="o">=</span><span class="s2">&quot;&quot;</span>               <span class="c"># Consult `man deluge-web` for more options</span>
+</span><span class='line'><span class="nv">PIDFILE1</span><span class="o">=</span>/var/run/<span class="nv">$NAME1</span>.pid
+</span><span class='line'><span class="nv">PIDFILE2</span><span class="o">=</span>/var/run/<span class="nv">$NAME2</span>.pid
+</span><span class='line'><span class="nv">UMASK</span><span class="o">=</span>022                     <span class="c"># Change this to 0 if running deluged as its own user</span>
+</span><span class='line'><span class="nv">PKGNAME</span><span class="o">=</span>deluge-daemon
+</span><span class='line'><span class="nv">SCRIPTNAME</span><span class="o">=</span>/etc/init.d/<span class="nv">$PKGNAME</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Exit if the package is not installed</span>
+</span><span class='line'><span class="o">[</span> -x <span class="s2">&quot;$DAEMON1&quot;</span> -a -x <span class="s2">&quot;$DAEMON2&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="nb">exit </span>0
+</span><span class='line'>
+</span><span class='line'><span class="c"># Read configuration variable file if it is present</span>
+</span><span class='line'><span class="o">[</span> -r /etc/default/<span class="nv">$PKGNAME</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> . /etc/default/<span class="nv">$PKGNAME</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Load the VERBOSE setting and other rcS variables</span>
+</span><span class='line'><span class="o">[</span> -f /etc/default/rcS <span class="o">]</span> <span class="o">&amp;&amp;</span> . /etc/default/rcS
+</span><span class='line'>
+</span><span class='line'><span class="c"># Define LSB log_* functions.</span>
+</span><span class='line'><span class="c"># Depend on lsb-base (&gt;= 3.0-6) to ensure that this file is present.</span>
+</span><span class='line'>. /lib/lsb/init-functions
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$RUN_AT_STARTUP&quot;</span> -o <span class="s2">&quot;$RUN_AT_STARTUP&quot;</span> !<span class="o">=</span> <span class="s2">&quot;YES&quot;</span> <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'><span class="k">   </span>log_warning_msg <span class="s2">&quot;Not starting $PKGNAME, edit /etc/default/$PKGNAME to start it.&quot;</span>
+</span><span class='line'>   <span class="nb">exit </span>0
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$DELUGED_USER&quot;</span> <span class="o">]</span>
+</span><span class='line'><span class="k">then</span>
+</span><span class='line'><span class="k">    </span>log_warning_msg <span class="s2">&quot;Not starting $PKGNAME, DELUGED_USER not set in /etc/default/$PKGNAME.&quot;</span>
+</span><span class='line'>    <span class="nb">exit </span>0
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Function that starts the daemon/service</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'>do_start<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="c"># Return</span>
+</span><span class='line'>   <span class="c">#   0 if daemon has been started</span>
+</span><span class='line'>   <span class="c">#   1 if daemon was already running</span>
+</span><span class='line'>   <span class="c">#   2 if daemon could not be started</span>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE1</span> --exec <span class="nv">$DAEMON1</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> --test &gt; /dev/null
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE2</span> --exec <span class="nv">$DAEMON2</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> --test &gt; /dev/null
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="k">return </span>1
+</span><span class='line'>
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE1</span> --make-pidfile --exec <span class="nv">$DAEMON1</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> -- <span class="nv">$DAEMON1_ARGS</span>
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>        sleep 2
+</span><span class='line'>   start-stop-daemon --start --background --quiet --pidfile <span class="nv">$PIDFILE2</span> --make-pidfile --exec <span class="nv">$DAEMON2</span> <span class="se">\</span>
+</span><span class='line'>      --chuid <span class="nv">$DELUGED_USER</span> --user <span class="nv">$DELUGED_USER</span> --umask <span class="nv">$UMASK</span> -- <span class="nv">$DAEMON2_ARGS</span>
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="k">return </span>2
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Function that stops the daemon/service</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'>do_stop<span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="c"># Return</span>
+</span><span class='line'>   <span class="c">#   0 if daemon has been stopped</span>
+</span><span class='line'>   <span class="c">#   1 if daemon was already stopped</span>
+</span><span class='line'>   <span class="c">#   2 if daemon could not be stopped</span>
+</span><span class='line'>   <span class="c">#   other if a failure occurred</span>
+</span><span class='line'>
+</span><span class='line'>   start-stop-daemon --stop --quiet --retry<span class="o">=</span>TERM/30/KILL/5 --user <span class="nv">$DELUGED_USER</span> --pidfile <span class="nv">$PIDFILE2</span>
+</span><span class='line'>   <span class="nv">RETVAL2</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   start-stop-daemon --stop --quiet --retry<span class="o">=</span>TERM/30/KILL/5 --user <span class="nv">$DELUGED_USER</span> --pidfile <span class="nv">$PIDFILE1</span>
+</span><span class='line'>   <span class="nv">RETVAL1</span><span class="o">=</span><span class="s2">&quot;$?&quot;</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span> -o <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>2
+</span><span class='line'>
+</span><span class='line'>   rm -f <span class="nv">$PIDFILE1</span> <span class="nv">$PIDFILE2</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$RETVAL1&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> -a <span class="s2">&quot;$RETVAL2&quot;</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return </span>0 <span class="o">||</span> <span class="k">return </span>1
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">case</span> <span class="s2">&quot;$1&quot;</span> in
+</span><span class='line'>  start<span class="o">)</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_daemon_msg <span class="s2">&quot;Starting $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_start
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>      0|1<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 0 ;;
+</span><span class='line'>      2<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 1 ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  stop<span class="o">)</span>
+</span><span class='line'>   <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_daemon_msg <span class="s2">&quot;Stopping $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_stop
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>      0|1<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 0 ;;
+</span><span class='line'>      2<span class="o">)</span> <span class="o">[</span> <span class="s2">&quot;$VERBOSE&quot;</span> !<span class="o">=</span> no <span class="o">]</span> <span class="o">&amp;&amp;</span> log_end_msg 1 ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  restart|force-reload<span class="o">)</span>
+</span><span class='line'>   log_daemon_msg <span class="s2">&quot;Restarting $DESC&quot;</span> <span class="s2">&quot;$NAME1&quot;</span>
+</span><span class='line'>   do_stop
+</span><span class='line'>   <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>     0|1<span class="o">)</span>
+</span><span class='line'>      do_start
+</span><span class='line'>      <span class="k">case</span> <span class="s2">&quot;$?&quot;</span> in
+</span><span class='line'>         0<span class="o">)</span> log_end_msg 0 ;;
+</span><span class='line'>         1<span class="o">)</span> log_end_msg 1 ;; <span class="c"># Old process is still running</span>
+</span><span class='line'>         *<span class="o">)</span> log_end_msg 1 ;; <span class="c"># Failed to start</span>
+</span><span class='line'>      <span class="k">esac</span>
+</span><span class='line'>      ;;
+</span><span class='line'>     *<span class="o">)</span>
+</span><span class='line'>        <span class="c"># Failed to stop</span>
+</span><span class='line'>      log_end_msg 1
+</span><span class='line'>      ;;
+</span><span class='line'>   <span class="k">esac</span>
+</span><span class='line'>   ;;
+</span><span class='line'>  *<span class="o">)</span>
+</span><span class='line'>   <span class="nb">echo</span> <span class="s2">&quot;Usage: $SCRIPTNAME {start|stop|restart|force-reload}&quot;</span> &gt;&amp;2
+</span><span class='line'>   <span class="nb">exit </span>3
+</span><span class='line'>   ;;
+</span><span class='line'><span class="k">esac</span>
+</span><span class='line'>
+</span><span class='line'>:
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Make the script executable and set to run on startup.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo chmod 755 /etc/init.d/deluge-daemon
+</span><span class='line'>sudo update-rc.d deluge-daemon defaults
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This following two commands are used to initialize files before editing them in the later steps.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo invoke-rc.d deluge-daemon start
+</span><span class='line'>sudo /etc/init.d/deluge-daemon stop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To be able to access the daemon from the local Deluge application on your computer, we need to enable remote access. You must now run <code>deluge-console</code> from the user prompt that you want to run Deluge as (same as the username you put in the script above).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>deluge-console
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once inside the console type the following</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>config -s allow_remote True
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To configure a username and password for login to the Deluge server, use the following command, changing out the values to make it your own username and password. These are not related in any way to the Ubuntu username and password.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;username:password:10&quot;</span> &gt;&gt; ~/.config/deluge/auth
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Start the daemon, and everything should be configured</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/init.d/deluge-daemon start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Ending Words</h3>
+
+<p>You are now able to access the WebUI at <code>http://your.server.ip:8112</code>. The default password is deluge.</p>
+
+<p>You are now able to login to the Deluge daemon using a thin client at <code>your.server.ip</code> and port <code>58846</code>. The username and password are what you set it as above.</p>
+
+<p>You can change all of the settings using the preferences in the thin client, such as ports and default directories.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tyler</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-11T00:41:00-07:00" pubdate data-updated="true">Apr 11<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/vps/'>vps</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tyhoff.github.com/blog/2012/04/installing-deluge-headless/" data-via="" data-counturl="http://tyhoff.github.com/blog/2012/04/installing-deluge-headless/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left articlenav" href="/blog/2012/04/remove-apache2-install-nginx/" title="Previous Post: Remove Apache2 - Install NGINX">&laquo; Remove Apache2 - Install NGINX</a>
+      
+      
+        <a class="basic-alignment right articlenav" href="/blog/2012/05/install-dropbox-ubuntu-headless/" title="Next Post: Install Dropbox - Ubuntu Headless">Install Dropbox - Ubuntu Headless &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+  		My name is Tyler Hoffman, and I am a senior at Purdue University studying Computer Science.
+  </p>
+  <p>
+  		This webpage is a stockpile of many neat tricks and advice I've come across over the years.
+  </p>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/tyhoff">@tyhoff</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'tyhoff',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/quality-of-service-in-tomato/">Quality of Service in Tomato</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/sleepwatcher-power-event-driven-automation/">Sleepwatcher : Run Script on Sleep</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/purdue-dining-court-api/">Purdue Dining Court API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/">Messages : Change cmd + delete behavior</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/access-purdue-cs-printers-remotely/">Access Purdue CS printers remotely</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Tyler -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Theme by <a href="http://melandri.net/2012/07/23/darkstripes-octopress-theme-released/">Alessandro Melandri</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

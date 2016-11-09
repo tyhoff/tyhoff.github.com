@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Remove Apache2 - Install NGINX - tyler hoffman</title>
+  <meta name="author" content="Tyler">
+
+  
+  <meta name="description" content="So you want to remove Apache2 in favor of NGINX? You&#8217;ve come to the right place. This is a quick and to the point guide that should get you up &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="tyler hoffman" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30753917-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">tyler hoffman</a></h1>
+  
+    <h2>my technological discoveries</h2>
+  
+  <div class="clear"></div>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tyhoff.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About Tyler</a></li>
+  <li><a href="/downloads/resume.pdf">Resume</a></li>
+  <li><a href="https://github.com/tyhoff">GitHub</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Remove Apache2 - Install NGINX</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-10T22:21:00-07:00" pubdate data-updated="true">Apr 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><img class="center" src="/images/posts/nginx.png"></p>
+
+<p>So you want to remove Apache2 in favor of NGINX? You&#8217;ve come to the right place. This is a quick and to the point guide that should get you up and running with NGINX in no time. I am using Ubuntu 11.10 on a VPS, but this should work for most installations of Ubuntu. NOTE: This guide does not include how to install PHP. I did not need it so I did not end up installing it.</p>
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Remove Apache2</h3>
+
+<p>This first command will delete everything apache2 on the system. The second will delete the apache2 directory</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get remove --purge apache2 apache2-utils
+</span><span class='line'><span class="nv">$ </span>sudo rm -rf /etc/apache2
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Install NGINX</h3>
+
+<p>The following commands will add NGINX&#8217;s repository so that you can install the most updated version.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo add-apt-repository ppa:nginx/stable
+</span><span class='line'><span class="nv">$ </span>sudo apt-get update
+</span><span class='line'><span class="nv">$ </span>sudo apt-get install nginx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you get an error on the add-apt-repository command, execute the following command</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo apt-get install python-software-properties
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Configure NGINX</h3>
+
+<p>Last thing we will need to do is to go to the configuration file for NGINX. It is located in <code>/etc/nginx/sites-available/default</code> This section is only the first part of the config file.</p>
+
+<figure class='code'><figcaption><span>/etc/nginx/sites-available/default</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>server {
+</span><span class='line'>  #listen   80; ## listen for ipv4; this line is default and implied
+</span><span class='line'>  #listen   [::]:80 default ipv6only=on; ## listen for ipv6
+</span><span class='line'>
+</span><span class='line'>  root /path/to/website/dir;
+</span><span class='line'>  index index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  # Make site accessible from http://localhost/
+</span><span class='line'>  server_name localhost;
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>      # First attempt to serve request as file, then
+</span><span class='line'>      # as directory, then fall back to index.html
+</span><span class='line'>      try_files $uri $uri/ /index.html;
+</span><span class='line'>      # Uncomment to enable naxsi on this location
+</span><span class='line'>      # include /etc/nginx/naxsi.rules
+</span><span class='line'>  }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You will need to change lines 5 and 6. Line 5 will need the path to the directory of your website, and line 6 will be the types of index files located in the directory, whether they are index.php, .html, .htm etc.</p>
+
+<p>To restart NGINX and make your changes take effect, the command to restart the service is necessary.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/nginx start
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br />
+
+
+<h3>Enjoy</h3>
+
+<p>There you have it. The simplest guide I can make that shows how to uninstall Apache2 and install NGINX.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tyler</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-10T22:21:00-07:00" pubdate data-updated="true">Apr 10<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/vps/'>vps</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx/" data-via="" data-counturl="http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left articlenav" href="/blog/2012/04/octopress-the-guide/" title="Previous Post: Octopress: The Guide">&laquo; Octopress: The Guide</a>
+      
+      
+        <a class="basic-alignment right articlenav" href="/blog/2012/04/installing-deluge-headless/" title="Next Post: Install Deluge - Ubuntu Headless">Install Deluge - Ubuntu Headless &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+  		My name is Tyler Hoffman, and I am a senior at Purdue University studying Computer Science.
+  </p>
+  <p>
+  		This webpage is a stockpile of many neat tricks and advice I've come across over the years.
+  </p>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/tyhoff">@tyhoff</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'tyhoff',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/quality-of-service-in-tomato/">Quality of Service in Tomato</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/sleepwatcher-power-event-driven-automation/">Sleepwatcher : Run Script on Sleep</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/purdue-dining-court-api/">Purdue Dining Court API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/">Messages : Change cmd + delete behavior</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/access-purdue-cs-printers-remotely/">Access Purdue CS printers remotely</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Tyler -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Theme by <a href="http://melandri.net/2012/07/23/darkstripes-octopress-theme-released/">Alessandro Melandri</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

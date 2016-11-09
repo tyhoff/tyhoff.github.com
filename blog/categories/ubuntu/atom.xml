@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ubuntu | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/ubuntu/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Install Dropbox - Ubuntu Headless]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless/"/>
+    <updated>2012-05-12T11:28:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/05/install-dropbox-ubuntu-headless</id>
+    <content type="html"><![CDATA[<p>This guide is about how to install Dropbox and its CLI (command line interface) on an Ubuntu server. Specifically, I am using a BuyVM Ubuntu 11.10 VPS without a GUI. An important note is that Dropbox increased my RAM usage by ~150MB, even while idling. This installation is probably not suited for a computer with 256MB or less.</p>
+
+<!--more-->
+
+
+<p>The next two commands will download Dropbox and install it to the root of the home directory of the current user.
+<code>bash
+wget -O ~/dropbox.tar.gz "http://www.dropbox.com/download/?plat=lnx.x86"
+tar -xzvf ~/dropbox.tar.gz
+</code></p>
+
+<p>Start the daemon for the current user
+<code>bash
+~/.dropbox-dist/dropboxd
+</code></p>
+
+<p>What will happen now is the terminal will output a website URL that you will need to navigate to using an internet browser. This is to link the installation to your Dropbox account. YOU MUST LEAVE THE PROGRAM RUNNING WHILE GOING TO THE WEBSITE.</p>
+
+<p>Once you have finished this step, Dropbox will say is has been successful with linking. You may hit <code>CTRL-C</code> now to stop the program.</p>
+
+<p>Currently, we now have new folder, <code>~/Dropbox</code>.</p>
+
+<p>We are now going to install the CLI for Dropbox, because it will make our lives much easier.</p>
+
+<p><code>bash
+wget -O ~/.dropbox/dropbox.py "http://www.dropbox.com/download?dl=packages/dropbox.py"
+chmod 755 ~/.dropbox/dropbox.py
+</code></p>
+
+<p>Now we need to start Dropbox, and let it initialize some of the folders and files so we can apply settings to them.</p>
+
+<p><code>bash
+~/.dropbox/dropbox.py start
+</code></p>
+
+<p>To have Dropbox start when the system is booted, we are going to edit the crontab. Usually, scripts are placed in init.d, but the script never worked for me on Ubuntu 11.10.</p>
+
+<p>Open the crontab by typing
+<code>bash
+crontab -e
+</code></p>
+
+<p>Add <code>@reboot ~/.dropbox-dist/dropboxd</code> somewhere in the file on its own line.</p>
+
+<p>Make sure cron is configured correctly to start up on a reboot.
+<code>bash
+update-rc.d cron defaults
+</code></p>
+
+<p>In my experience, it is now best to reboot the server. If I did not restart the computer now, I was not able to configure my Dropbox installation using the CLI we downloaded. It would always give me the error "Dropbox is not responding"</p>
+
+<p>To find out what the CLI can do, you can type
+<code>bash
+~/.dropbox/dropbox.py help
+</code></p>
+
+<p>To exclude specific folders, you can type
+<code>bash
+~/.dropbox/dropbox.py exclude add ~/Dropbox/folder
+</code></p>
+
+<p>There you have it. Dropbox is now installed, it runs when the computer is booted using a cron command, and you can only sync the folders that you want.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Install Deluge - Ubuntu Headless]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/installing-deluge-headless/"/>
+    <updated>2012-04-11T00:41:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/installing-deluge-headless</id>
+    <content type="html"><![CDATA[<p>This guide is about how to install <a href="http://dev.deluge-torrent.org/wiki/About">Deluge</a>. More specifically, since this is going to be installed on an Ubuntu 11.10 VPS, only the daemon and Web UI are going to be installed because there is no need for a GUI. I will also cover how to set up the Thin Client so that you can remotely control the daemon using a native application on your client computer.</p>
+
+<h3>There are 3 parts to this guide</h3>
+
+<ol>
+<li>Installing the Daemon</li>
+<li>Setting up the Web UI</li>
+<li>Connecting using the Thin Client</li>
+</ol>
+
+
+<!--more-->
+
+
+<h3>Installing the Daemon</h3>
+
+<p>We are going to add the Deluge repository, because the version of Deluge located in the default one is usually outdated. Notice <code>deluge</code> isn't included here because we do not want the GUI version of deluge, only the daemon and Web UI.
+<code>bash
+$ sudo add-apt-repository ppa:deluge-team/ppa
+$ sudo apt-get update
+$ sudo apt-get install deluged deluge-webui deluge-console
+</code>
+If the <code>add-apt-repository</code> command did not work, run the following code and try then again.
+<code>bash
+$ sudo apt-get install python-software-properties
+</code></p>
+
+<p>To run the daemon when the computer boots, you must copy the following script to <code>/etc/default/deluge-daemon</code>. You need to add the username that the program is to be run as between the quotation marks after <code>DELUGED_USER</code>.
+``` bash /etc/default/deluge-daemon</p>
+
+<h1>Configuration for /etc/init.d/deluge-daemon</h1>
+
+<h1>The init.d script will only run if this variable non-empty.</h1>
+
+<p>DELUGED_USER=""             # !!!CHANGE THIS!!!!</p>
+
+<h1>Should we run at startup?</h1>
+
+<p>RUN_AT_STARTUP="YES"
+<code>
+You need to place the following script in &lt;code&gt;/etc/init.d/deluge-daemon&lt;/code&gt;.
+</code> bash /etc/init.d/deluge-daemon</p>
+
+<h1>!/bin/sh</h1>
+
+<h3>BEGIN INIT INFO</h3>
+
+<h1>Provides:          deluge-daemon</h1>
+
+<h1>Required-Start:    $local_fs $remote_fs</h1>
+
+<h1>Required-Stop:     $local_fs $remote_fs</h1>
+
+<h1>Should-Start:      $network</h1>
+
+<h1>Should-Stop:       $network</h1>
+
+<h1>Default-Start:     2 3 4 5</h1>
+
+<h1>Default-Stop:      0 1 6</h1>
+
+<h1>Short-Description: Daemonized version of deluge and webui.</h1>
+
+<h1>Description:       Starts the deluge daemon with the user specified in</h1>
+
+<h1>/etc/default/deluge-daemon.</h1>
+
+<h3>END INIT INFO</h3>
+
+<h1>Author: Adolfo R. Brandes</h1>
+
+<p>PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="Deluge Daemon"
+NAME1="deluged"
+NAME2="deluge"
+DAEMON1=/usr/bin/deluged
+DAEMON1_ARGS="-d"             # Consult <code>man deluged</code> for more options
+DAEMON2=/usr/bin/deluge-web
+DAEMON2_ARGS=""               # Consult <code>man deluge-web</code> for more options
+PIDFILE1=/var/run/$NAME1.pid
+PIDFILE2=/var/run/$NAME2.pid
+UMASK=022                     # Change this to 0 if running deluged as its own user
+PKGNAME=deluge-daemon
+SCRIPTNAME=/etc/init.d/$PKGNAME</p>
+
+<h1>Exit if the package is not installed</h1>
+
+<p>[ -x "$DAEMON1" -a -x "$DAEMON2" ] || exit 0</p>
+
+<h1>Read configuration variable file if it is present</h1>
+
+<p>[ -r /etc/default/$PKGNAME ] &amp;&amp; . /etc/default/$PKGNAME</p>
+
+<h1>Load the VERBOSE setting and other rcS variables</h1>
+
+<p>[ -f /etc/default/rcS ] &amp;&amp; . /etc/default/rcS</p>
+
+<h1>Define LSB log_* functions.</h1>
+
+<h1>Depend on lsb-base (>= 3.0-6) to ensure that this file is present.</h1>
+
+<p>. /lib/lsb/init-functions</p>
+
+<p>if [ -z "$RUN_AT_STARTUP" -o "$RUN_AT_STARTUP" != "YES" ]
+then
+   log_warning_msg "Not starting $PKGNAME, edit /etc/default/$PKGNAME to start it."
+   exit 0
+fi</p>
+
+<p>if [ -z "$DELUGED_USER" ]
+then</p>
+
+<pre><code>log_warning_msg "Not starting $PKGNAME, DELUGED_USER not set in /etc/default/$PKGNAME."
+exit 0
+</code></pre>
+
+<p>fi</p>
+
+<p>#</p>
+
+<h1>Function that starts the daemon/service</h1>
+
+<p>#
+do_start()
+{
+   # Return
+   #   0 if daemon has been started
+   #   1 if daemon was already running
+   #   2 if daemon could not be started
+   start-stop-daemon --start --background --quiet --pidfile $PIDFILE1 --exec $DAEMON1 \</p>
+
+<pre><code>  --chuid $DELUGED_USER --user $DELUGED_USER --umask $UMASK --test &gt; /dev/null
+</code></pre>
+
+<p>   RETVAL1="$?"
+   start-stop-daemon --start --background --quiet --pidfile $PIDFILE2 --exec $DAEMON2 \</p>
+
+<pre><code>  --chuid $DELUGED_USER --user $DELUGED_USER --umask $UMASK --test &gt; /dev/null
+</code></pre>
+
+<p>   RETVAL2="$?"
+   [ "$RETVAL1" = "0" -a "$RETVAL2" = "0" ] || return 1</p>
+
+<p>   start-stop-daemon --start --background --quiet --pidfile $PIDFILE1 --make-pidfile --exec $DAEMON1 \</p>
+
+<pre><code>  --chuid $DELUGED_USER --user $DELUGED_USER --umask $UMASK -- $DAEMON1_ARGS
+</code></pre>
+
+<p>   RETVAL1="$?"</p>
+
+<pre><code>    sleep 2
+</code></pre>
+
+<p>   start-stop-daemon --start --background --quiet --pidfile $PIDFILE2 --make-pidfile --exec $DAEMON2 \</p>
+
+<pre><code>  --chuid $DELUGED_USER --user $DELUGED_USER --umask $UMASK -- $DAEMON2_ARGS
+</code></pre>
+
+<p>   RETVAL2="$?"
+   [ "$RETVAL1" = "0" -a "$RETVAL2" = "0" ] || return 2
+}</p>
+
+<p>#</p>
+
+<h1>Function that stops the daemon/service</h1>
+
+<p>#
+do_stop()
+{
+   # Return
+   #   0 if daemon has been stopped
+   #   1 if daemon was already stopped
+   #   2 if daemon could not be stopped
+   #   other if a failure occurred</p>
+
+<p>   start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --user $DELUGED_USER --pidfile $PIDFILE2
+   RETVAL2="$?"
+   start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --user $DELUGED_USER --pidfile $PIDFILE1
+   RETVAL1="$?"
+   [ "$RETVAL1" = "2" -o "$RETVAL2" = "2" ] &amp;&amp; return 2</p>
+
+<p>   rm -f $PIDFILE1 $PIDFILE2</p>
+
+<p>   [ "$RETVAL1" = "0" -a "$RETVAL2" = "0" ] &amp;&amp; return 0 || return 1
+}</p>
+
+<p>case "$1" in
+  start)
+   [ "$VERBOSE" != no ] &amp;&amp; log_daemon_msg "Starting $DESC" "$NAME1"
+   do_start
+   case "$?" in</p>
+
+<pre><code>  0|1) [ "$VERBOSE" != no ] &amp;&amp; log_end_msg 0 ;;
+  2) [ "$VERBOSE" != no ] &amp;&amp; log_end_msg 1 ;;
+</code></pre>
+
+<p>   esac
+   ;;
+  stop)
+   [ "$VERBOSE" != no ] &amp;&amp; log_daemon_msg "Stopping $DESC" "$NAME1"
+   do_stop
+   case "$?" in</p>
+
+<pre><code>  0|1) [ "$VERBOSE" != no ] &amp;&amp; log_end_msg 0 ;;
+  2) [ "$VERBOSE" != no ] &amp;&amp; log_end_msg 1 ;;
+</code></pre>
+
+<p>   esac
+   ;;
+  restart|force-reload)
+   log_daemon_msg "Restarting $DESC" "$NAME1"
+   do_stop
+   case "$?" in</p>
+
+<pre><code> 0|1)
+  do_start
+  case "$?" in
+     0) log_end_msg 0 ;;
+     1) log_end_msg 1 ;; # Old process is still running
+     *) log_end_msg 1 ;; # Failed to start
+  esac
+  ;;
+ *)
+    # Failed to stop
+  log_end_msg 1
+  ;;
+</code></pre>
+
+<p>   esac
+   ;;
+  *)
+   echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&amp;2
+   exit 3
+   ;;
+esac</p>
+
+<p>:
+<code>
+Make the script executable and set to run on startup.
+</code> bash
+sudo chmod 755 /etc/init.d/deluge-daemon
+sudo update-rc.d deluge-daemon defaults
+```</p>
+
+<p>This following two commands are used to initialize files before editing them in the later steps.
+<code>bash
+sudo invoke-rc.d deluge-daemon start
+sudo /etc/init.d/deluge-daemon stop
+</code></p>
+
+<p>To be able to access the daemon from the local Deluge application on your computer, we need to enable remote access. You must now run <code>deluge-console</code> from the user prompt that you want to run Deluge as (same as the username you put in the script above).
+<code>bash
+deluge-console
+</code>
+Once inside the console type the following
+<code>bash
+config -s allow_remote True
+</code></p>
+
+<p>To configure a username and password for login to the Deluge server, use the following command, changing out the values to make it your own username and password. These are not related in any way to the Ubuntu username and password.
+<code>bash
+echo "username:password:10" &gt;&gt; ~/.config/deluge/auth
+</code></p>
+
+<p>Start the daemon, and everything should be configured
+<code>bash
+sudo /etc/init.d/deluge-daemon start
+</code></p>
+
+<h3>Ending Words</h3>
+
+<p>You are now able to access the WebUI at <code>http://your.server.ip:8112</code>. The default password is deluge.</p>
+
+<p>You are now able to login to the Deluge daemon using a thin client at <code>your.server.ip</code> and port <code>58846</code>. The username and password are what you set it as above.</p>
+
+<p>You can change all of the settings using the preferences in the thin client, such as ports and default directories.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Remove Apache2 - Install NGINX]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx/"/>
+    <updated>2012-04-10T22:21:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/remove-apache2-install-nginx</id>
+    <content type="html"><![CDATA[<p><img class="center" src="/images/posts/nginx.png"></p>
+
+<p>So you want to remove Apache2 in favor of NGINX? You've come to the right place. This is a quick and to the point guide that should get you up and running with NGINX in no time. I am using Ubuntu 11.10 on a VPS, but this should work for most installations of Ubuntu. NOTE: This guide does not include how to install PHP. I did not need it so I did not end up installing it.</p>
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Remove Apache2</h3>
+
+<p>This first command will delete everything apache2 on the system. The second will delete the apache2 directory
+<code>bash
+$ sudo apt-get remove --purge apache2 apache2-utils
+$ sudo rm -rf /etc/apache2
+</code></p>
+
+<br />
+
+
+<h3>Install NGINX</h3>
+
+<p>The following commands will add NGINX's repository so that you can install the most updated version.
+<code>bash
+$ sudo add-apt-repository ppa:nginx/stable
+$ sudo apt-get update
+$ sudo apt-get install nginx
+</code>
+If you get an error on the add-apt-repository command, execute the following command
+<code>bash
+$ sudo apt-get install python-software-properties
+</code></p>
+
+<br />
+
+
+<h3>Configure NGINX</h3>
+
+<p>Last thing we will need to do is to go to the configuration file for NGINX. It is located in <code>/etc/nginx/sites-available/default</code> This section is only the first part of the config file.
+``` xml /etc/nginx/sites-available/default
+server {</p>
+
+<pre><code>#listen   80; ## listen for ipv4; this line is default and implied
+#listen   [::]:80 default ipv6only=on; ## listen for ipv6
+
+root /path/to/website/dir;
+index index.html index.htm;
+
+# Make site accessible from http://localhost/
+server_name localhost;
+
+location / {
+    # First attempt to serve request as file, then
+    # as directory, then fall back to index.html
+    try_files $uri $uri/ /index.html;
+    # Uncomment to enable naxsi on this location
+    # include /etc/nginx/naxsi.rules
+}
+</code></pre>
+
+<p>```
+You will need to change lines 5 and 6. Line 5 will need the path to the directory of your website, and line 6 will be the types of index files located in the directory, whether they are index.php, .html, .htm etc.</p>
+
+<p>To restart NGINX and make your changes take effect, the command to restart the service is necessary.
+<code>bash
+$ sudo /etc/init.d/nginx start
+</code></p>
+
+<br />
+
+
+<h3>Enjoy</h3>
+
+<p>There you have it. The simplest guide I can make that shows how to uninstall Apache2 and install NGINX.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress: The Guide]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/octopress-the-guide/"/>
+    <updated>2012-04-10T22:18:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/octopress-the-guide</id>
+    <content type="html"><![CDATA[<p>Octopress is a blogging framework that doesn't use MySQL or PHP, and allows for quick, focused writing. It brings coders and hackers back to their roots. The benefits of <a href="http://octopress.org/">Octopress</a> are numerous, but you are encouraged to go to its website and learn more.</p>
+
+<p>The goal of this post is to allow anyone with a minimal programming background to set up and maintain an  blog. This website is run on an Ubuntu 11.10 VPS, so this guide will for Ubuntu installations. I opted to go with the all in one approach, everything that generates the website is located on the server.</p>
+
+<h3>There are 4 parts to this guide.</h3>
+
+<ol>
+<li>Installing RVM and Ruby</li>
+<li>Installing Octopress</li>
+<li>Configuring Apache</li>
+<li>How to start blogging</li>
+</ol>
+
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Installing RVM and Ruby</h3>
+
+<p>RVM is the Ruby Version Manager. I have found that RVM is easier to install than rbenv, but others might disagree.
+<code>bash
+$ sudo apt-get update
+$ sudo bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+$ umask g+w
+$ source /etc/profile.d/rvm.sh
+</code>
+This next command will install all of the dependencies of Ruby.
+<code>bash
+$ sudo apt-get install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion
+</code>
+Replacing "user" with your UNIX login name will allow the user to edit the files in <code>/usr/local/rvm</code>.
+<code>bash
+$ sudo chown -R user:user /usr/local/rvm
+</code>
+Next, now that you have RVM installed, we can go ahead and install Ruby and set version 1.9.3 as the default version. (switch 1.9.3 with the current version if changed). The following command will take 15-20 minutes, so don't be afraid if it takes a while to finish.
+<code>bash
+$ rvm install 1.9.3 &amp;&amp; rvm use 1.9.3
+$ ruby -v
+</code>
+The last command there should show <code>ruby 1.9.3p125</code> or something similar.</p>
+
+<br />
+
+
+<h3>Installing Octopress</h3>
+
+<p>If at anytime during the next few steps RVM asks if you would like to trust the .rvmc file, you can safely say "yes"
+<code>bash
+$ cd
+$ git clone git://github.com/imathis/octopress.git octopress
+$ cd octopress    
+$ gem install bundler
+$ bundle install
+$ rake install
+</code></p>
+
+<p>This final step to get Octopress to install. This will build the files that are located in <code>/source/</code> and publish them into the <code>/public/</code> folder.<br/>
+<code>bash
+$ rake generate
+</code></p>
+
+<br />
+
+
+<h3>Configuring Apache</h3>
+
+<p>I am going to assume that Apache is already working, meaning that if you typed in <code>127.0.0.1</code> or <code>localhost</code> into the browser of your server, or by typing in the IP of your VPS, you should see a "It Works" page.</p>
+
+<p>The first and only step is to change what directory Apache looks in to display the webpage. I am going to create a new webpage configuration with the name <code>mysite</code>. You may name it how you like and change out the name when applicable.
+<code>bash
+$ cd /etc/apache2/sites-available
+$ sudo cp default mysite
+</code></p>
+
+<p>Now you have to open the new configuration file with your favorite editor. I am going to use vim
+<code>bash
+$ sudo vim mysite
+</code>
+I put comments above the two lines that need to be changed. You need to change <code>/var/www</code> to the path of the Octopress public folder, which is most likely <code>/home/user/octopress/public</code>, where "user" is your UNIX username.
+``` xml /etc/apache2/sites-available/mysite
+<VirtualHost *:80></p>
+
+<pre><code>ServerAdmin webmaster@localhost
+
+&lt;!-- point the line below to Octopress's public folder --&gt;
+DocumentRoot /path/to/octopress/public/folder    
+&lt;Directory /&gt;
+    Options FollowSymLinks
+    AllowOverride None
+&lt;/Directory&gt;
+
+&lt;!-- point the line below to Octopress's public folder --&gt;
+&lt;Directory /path/to/octopress/public/folder &gt;
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+&lt;/Directory&gt;
+
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+&lt;Directory "/usr/lib/cgi-bin"&gt;
+    AllowOverride None
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+
+ErrorLog ${APACHE_LOG_DIR}/error.log
+
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+LogLevel warn
+
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+Alias /doc/ "/usr/share/doc/"
+&lt;Directory "/usr/share/doc/"&gt;
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride None
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.0/255.0.0.0 ::1/128
+&lt;/Directory&gt;
+</code></pre>
+
+<p></VirtualHost>
+<code>
+The final thing to do is to restart Apache so that the changes show up
+</code>bash
+$ sudo service apache2 reload
+```
+There! Now if you go to the address of your webpage, you should see a generic Octopress page. If you don't, leave a comment and we will see what we can do.</p>
+
+<br />
+
+
+<h3>How to start blogging</h3>
+
+<p>To insert a new post, type:
+<code>bash
+$ rake new_post["post title"]
+</code>
+This will create a new file in the directory <code>/source/_posts/"date and name of post"</code>. You will need to edit this file using the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> syntax. It is quite simple to understand and learn.</p>
+
+<p>Each time you create a new post, you can use the following command to update the webpage and push any changes to the public folder.
+<code>bash
+$ rake generate
+</code>
+If you want to learn more about how to manage posts and create pages, please visit the Octopress page <a href="http://octopress.org/docs/blogging/">Blogging Basics</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Sleepwatcher : Run Script on Sleep - tyler hoffman</title>
+  <meta name="author" content="Tyler">
+
+  
+  <meta name="description" content="Sleepwatcher is a Mac OS X background daemon that can trigger a script to run when various power related events occur, such as the laptop sleeping or &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="tyler hoffman" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30753917-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">tyler hoffman</a></h1>
+  
+    <h2>my technological discoveries</h2>
+  
+  <div class="clear"></div>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tyhoff.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About Tyler</a></li>
+  <li><a href="/downloads/resume.pdf">Resume</a></li>
+  <li><a href="https://github.com/tyhoff">GitHub</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Sleepwatcher : Run Script on Sleep</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-05T15:31:00-07:00" pubdate data-updated="true">Sep 5<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a href="http://www.bernhard-baehr.de/">Sleepwatcher</a> is a Mac OS X background daemon that can trigger a script to run when various power related events occur, such as the laptop sleeping or waking up, the screen dimming, or power adapter being connected or disconnected.</p>
+
+<p>On my personal laptop, I have an AppleScript set up within sleepwatcher that mutes the audio each time the laptop goes to sleep. This is to prevent accidental audio playing during meetings and classes.</p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<p>Below is setup script for sleepwatcher that I have written that installs it automatically as a system wise daemon.</p>
+
+<figure class='code'><figcaption><span> (sleepwatcher.sh)</span> <a href='/downloads/code/sleepwatcher.sh'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/bash</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># acquire sudo at the beginning</span>
+</span><span class='line'>sudo -v
+</span><span class='line'>
+</span><span class='line'><span class="c"># Keep-alive: update existing `sudo` time stamp until `.osx` has finished</span>
+</span><span class='line'><span class="k">while </span><span class="nb">true</span>; <span class="k">do </span>sudo -n <span class="nb">true</span>; sleep 60; <span class="nb">kill</span> -0 <span class="s2">&quot;$$&quot;</span> <span class="o">||</span> <span class="nb">exit</span>; <span class="k">done </span>2&gt;/dev/null &amp;
+</span><span class='line'>
+</span><span class='line'><span class="c"># unload launch agents</span>
+</span><span class='line'>sudo launchctl unload /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>launchctl unload ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove plist launchagents</span>
+</span><span class='line'>sudo rm -f /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>rm -f ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove executable and man files</span>
+</span><span class='line'>sudo rm -f /usr/local/sbin/sleepwatcher
+</span><span class='line'>sudo rm -f /usr/local/share/man/man8/sleepwatcher.8
+</span><span class='line'>
+</span><span class='line'><span class="c"># download sleepwatcher package, untar, and cd into directory</span>
+</span><span class='line'>curl --remote-name <span class="s2">&quot;http://www.bernhard-baehr.de/sleepwatcher_2.2.tgz&quot;</span>
+</span><span class='line'>tar xvzf sleepwatcher_2.2.tgz 2&gt;/dev/null
+</span><span class='line'><span class="nb">cd </span>sleepwatcher_2.2
+</span><span class='line'>
+</span><span class='line'><span class="c"># create folders necessary for installation</span>
+</span><span class='line'>sudo mkdir -p /usr/local/sbin /usr/local/share/man/man8
+</span><span class='line'>
+</span><span class='line'><span class="c"># move files into installation folders</span>
+</span><span class='line'>sudo cp sleepwatcher /usr/local/sbin
+</span><span class='line'>sudo cp sleepwatcher.8 /usr/local/share/man/man8
+</span><span class='line'>sudo cp config/de.bernhard-baehr.sleepwatcher-20compatibility.plist /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'>sleep 1
+</span><span class='line'>
+</span><span class='line'><span class="c"># load launch agent</span>
+</span><span class='line'>sudo launchctl load -w -F /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># create script in local user directory and make them executable</span>
+</span><span class='line'>sudo touch /etc/rc.wakeup
+</span><span class='line'>sudo touch /etc/rc.sleep
+</span><span class='line'>sudo chmod +x /etc/rc.sleep /etc/rc.wakeup
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The script begins with deleting any old version of sleepwatcher on the computer. It them moves onto downloading the package and copying the files into the appropriate places. It loads the launch daemon then creates two files, <code>/etc/rc.sleep</code> and <code>/etc/rc.wakeup</code>. These get run at their respective times, when the laptop is going to sleep or waking up.</p>
+
+<p>My personal <code>/etc/rc.wakeup</code> script is shown below. All it does is run the short AppleScript command of setting the volume to zero. To get this functionality on your computer, just copy the code below into your own <code>/etc/rc.wakeup</code>.</p>
+
+<figure class='code'><figcaption><span>/etc/rc.wakeup</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>osascript -e <span class="s1">&#39;set volume 0&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Other possible uses for sleepwatcher include updating a DNS record on wakeup, opening up specific applications for a user, and of course running another script of the user&#8217;s choice.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Tyler</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-05T15:31:00-07:00" pubdate data-updated="true">Sep 5<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mac/'>mac</a>, <a class='category' href='/blog/categories/osx/'>osx</a>, <a class='category' href='/blog/categories/scripts/'>scripts</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation/" data-via="" data-counturl="http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left articlenav" href="/blog/2013/04/purdue-dining-court-api/" title="Previous Post: Purdue Dining Court API">&laquo; Purdue Dining Court API</a>
+      
+      
+        <a class="basic-alignment right articlenav" href="/blog/2013/10/quality-of-service-in-tomato/" title="Next Post: Quality of Service in Tomato">Quality of Service in Tomato &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>
+  		My name is Tyler Hoffman, and I am a senior at Purdue University studying Computer Science.
+  </p>
+  <p>
+  		This webpage is a stockpile of many neat tricks and advice I've come across over the years.
+  </p>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/tyhoff">@tyhoff</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'tyhoff',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/quality-of-service-in-tomato/">Quality of Service in Tomato</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/sleepwatcher-power-event-driven-automation/">Sleepwatcher : Run Script on Sleep</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/purdue-dining-court-api/">Purdue Dining Court API</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/">Messages : Change cmd + delete behavior</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/access-purdue-cs-printers-remotely/">Access Purdue CS printers remotely</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Tyler -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Theme by <a href="http://melandri.net/2012/07/23/darkstripes-octopress-theme-released/">Alessandro Melandri</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

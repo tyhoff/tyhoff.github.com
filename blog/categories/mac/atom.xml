@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mac | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/mac/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sleepwatcher : Run Script on Sleep]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation/"/>
+    <updated>2013-09-05T15:31:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/09/sleepwatcher-power-event-driven-automation</id>
+    <content type="html"><![CDATA[<p><a href="http://www.bernhard-baehr.de/">Sleepwatcher</a> is a Mac OS X background daemon that can trigger a script to run when various power related events occur, such as the laptop sleeping or waking up, the screen dimming, or power adapter being connected or disconnected.</p>
+
+<p>On my personal laptop, I have an AppleScript set up within sleepwatcher that mutes the audio each time the laptop goes to sleep. This is to prevent accidental audio playing during meetings and classes.</p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<p>Below is setup script for sleepwatcher that I have written that installs it automatically as a system wise daemon.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (sleepwatcher.sh)</span> <a href='/downloads/code/sleepwatcher.sh'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/bash</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># acquire sudo at the beginning</span>
+</span><span class='line'>sudo -v
+</span><span class='line'>
+</span><span class='line'><span class="c"># Keep-alive: update existing `sudo` time stamp until `.osx` has finished</span>
+</span><span class='line'><span class="k">while </span><span class="nb">true</span>; <span class="k">do </span>sudo -n <span class="nb">true</span>; sleep 60; <span class="nb">kill</span> -0 <span class="s2">&quot;$$&quot;</span> <span class="o">||</span> <span class="nb">exit</span>; <span class="k">done </span>2&gt;/dev/null &amp;
+</span><span class='line'>
+</span><span class='line'><span class="c"># unload launch agents</span>
+</span><span class='line'>sudo launchctl unload /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>launchctl unload ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist 2&gt;/dev/null
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove plist launchagents</span>
+</span><span class='line'>sudo rm -f /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>rm -f ~/Library/LaunchAgents/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># remove executable and man files</span>
+</span><span class='line'>sudo rm -f /usr/local/sbin/sleepwatcher
+</span><span class='line'>sudo rm -f /usr/local/share/man/man8/sleepwatcher.8
+</span><span class='line'>
+</span><span class='line'><span class="c"># download sleepwatcher package, untar, and cd into directory</span>
+</span><span class='line'>curl --remote-name <span class="s2">&quot;http://www.bernhard-baehr.de/sleepwatcher_2.2.tgz&quot;</span>
+</span><span class='line'>tar xvzf sleepwatcher_2.2.tgz 2&gt;/dev/null
+</span><span class='line'><span class="nb">cd </span>sleepwatcher_2.2
+</span><span class='line'>
+</span><span class='line'><span class="c"># create folders necessary for installation</span>
+</span><span class='line'>sudo mkdir -p /usr/local/sbin /usr/local/share/man/man8
+</span><span class='line'>
+</span><span class='line'><span class="c"># move files into installation folders</span>
+</span><span class='line'>sudo cp sleepwatcher /usr/local/sbin
+</span><span class='line'>sudo cp sleepwatcher.8 /usr/local/share/man/man8
+</span><span class='line'>sudo cp config/de.bernhard-baehr.sleepwatcher-20compatibility.plist /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'>sleep 1
+</span><span class='line'>
+</span><span class='line'><span class="c"># load launch agent</span>
+</span><span class='line'>sudo launchctl load -w -F /Library/LaunchDaemons/de.bernhard-baehr.sleepwatcher.plist
+</span><span class='line'>
+</span><span class='line'><span class="c"># create script in local user directory and make them executable</span>
+</span><span class='line'>sudo touch /etc/rc.wakeup
+</span><span class='line'>sudo touch /etc/rc.sleep
+</span><span class='line'>sudo chmod +x /etc/rc.sleep /etc/rc.wakeup
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The script begins with deleting any old version of sleepwatcher on the computer. It them moves onto downloading the package and copying the files into the appropriate places. It loads the launch daemon then creates two files, <code>/etc/rc.sleep</code> and <code>/etc/rc.wakeup</code>. These get run at their respective times, when the laptop is going to sleep or waking up.</p>
+
+<p>My personal <code>/etc/rc.wakeup</code> script is shown below. All it does is run the short AppleScript command of setting the volume to zero. To get this functionality on your computer, just copy the code below into your own <code>/etc/rc.wakeup</code>.
+```bash /etc/rc.wakeup</p>
+
+<h1>!/bin/sh</h1>
+
+<p>osascript -e 'set volume 0'
+```</p>
+
+<p>Other possible uses for sleepwatcher include updating a DNS record on wakeup, opening up specific applications for a user, and of course running another script of the user's choice.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Messages : Change cmd + delete behavior]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior/"/>
+    <updated>2013-04-28T12:22:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/messages-dot-app-change-cmd-plus-delete-behavior</id>
+    <content type="html"><![CDATA[<p><img class="center" src="/images/posts/messages_delete0.png"></p>
+
+<p>One annoying thing in Mountain Lion's Messages.app application is that the shortcut <code>command + delete</code> is mapped to "Close Conversation" instead of deleting the current line of text. This fix to this is very simple.</p>
+
+<!-- more -->
+
+
+<br>
+
+
+<p>We are going to change the shortcut for the "Close Conversation..." action to something that's not <code>command + delete</code>.</p>
+
+<ol>
+<li>Choose <strong>System Preferences</strong> from the <strong>Apple</strong> menu.</li>
+<li>Choose <strong>Keyboard</strong> from the View menu.</li>
+<li>At the top, choose the <strong>Keyboard Shortcuts</strong> tab.</li>
+<li>In the left box, click Application Shortcuts.</li>
+<li>At the bottom of the right box, click the <strong>+</strong> sign.</li>
+<li>Fill in the form as shown below in the image.</li>
+<li>Click <strong>Add</strong>.</li>
+<li>Done! Now when you go into messages, you'll have the usual <code>command + delete</code> behavior.</li>
+</ol>
+
+
+<p><img class="center" src="/images/posts/messages_delete2.png"></p>
+
+<blockquote><p>Note: The keyboard shortcut given above is <code>shift + command + D</code></p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Access Purdue CS printers remotely]]></title>
+    <link href="http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely/"/>
+    <updated>2013-04-26T13:15:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2013/04/access-purdue-cs-printers-remotely</id>
+    <content type="html"><![CDATA[<p><img class="center" src="/images/posts/lawson_printing0.png"></p>
+
+<p>This is a short tutorial about how to access and send jobs to the printers on the Purdue CS Network using a Mac.</p>
+
+<!-- more -->
+
+
+<p>This is copied directly from the <a href="http://support.apple.com/kb/HT3049">Mac OS X Help pages</a>:</p>
+
+<p><strong>Mac OS X v10.5 or later</strong></p>
+
+<ol>
+<li>Choose <strong>System Preferences</strong> from the <strong>Apple</strong> menu.</li>
+<li>Choose <strong>Print &amp; Fax</strong> from the View menu.</li>
+<li>Click the <strong>+</strong> button to add a printer.</li>
+<li>Press the Control key while clicking the "Default" icon (or any other icon on the toolbar), then choose Customize Toolbar from the contextual menu that appears.</li>
+<li>Drag the Advanced (gear) icon to the toolbar.</li>
+<li>Click Done.</li>
+<li>Click the Advanced icon that was added to the toolbar.</li>
+<li>Choose Windows from the Type pop-up menu.</li>
+<li>In the URL field, type the printer's address in one of the following formats:</li>
+</ol>
+
+
+<blockquote><p>smb://cups.cs.purdue.edu/&lt;printer_name></p></blockquote>
+
+<ol>
+<li>In the Name field, type the name you would like to use for this printer in Mac OS X.</li>
+<li>In the Use field, choose 'Generic PostScript Printer'</li>
+<li>Click Add.</li>
+</ol>
+
+
+<p><img class="center" src="/images/posts/lawson_printing1.png"></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[My GeekTool Setup]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/09/my-geektool-setup/"/>
+    <updated>2012-09-13T16:49:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/09/my-geektool-setup</id>
+    <content type="html"><![CDATA[<p>My GeekTool setup is meant strictly for productivity. There are no pretty pictures, no cool meters or text or color. It is in a monospace font that allows for simple formatting, and it gets the job done...well. Here it is:</p>
+
+<p><img class="center" src="/images/posts/geektool.png"></p>
+
+<!-- more -->
+
+
+<p>The GeekTool picture above has the following elements:</p>
+
+<ul>
+<li>Shuffle status of iTunes on the current playlist</li>
+<li>iTunes current volume</li>
+<li>Hard drive space remaining on internal SSD</li>
+<li>CPU top 2 processes</li>
+<li>Fan speed and CPU temperature</li>
+<li>Current iTunes song</li>
+</ul>
+
+
+<p>I can't take a screenshot of my entire desktop, because the resolution on the MBPr is too large, but here is an old image.</p>
+
+<p><a href="http://i.imgur.com/IXoU9.png"><img class="center" src="http://i.imgur.com/IXoU9.png" title="Alt text" ></a></p>
+
+<p>The reason for this setup is so that I can always see my GeekTool information. If I maximize Chrome or any other application, the Dock prevents it from maximizing the entire screen, leaving the black sliver with my GeekTool in sight. I can always know if a process is consuming too much CPU, if my computer is getting hot, and the current song.</p>
+
+<h2>How To - AppleScript</h2>
+
+<p>AppleScript is needed for some GeekTool scripts because it allows easy interfacing with applications to get data to display. The two examples below show the internal iTunes volume and the current playing song.</p>
+
+<br>
+
+
+<h3>iTunes Volume</h3>
+
+<p>The first AppleScript we will look at the percent status of the internal iTunes volume. It is nothing too fancy.</p>
+
+<p>```
+if appIsRunning("iTunes") then</p>
+
+<pre><code>tell application "iTunes"
+    "iTunes:  " &amp; sound volume &amp; "%"
+end tell
+</code></pre>
+
+<p>end if</p>
+
+<h1>method that checks if the application is running</h1>
+
+<p>on appIsRunning(appName)</p>
+
+<pre><code>tell application "System Events" to (name of processes) contains appName
+</code></pre>
+
+<p>end appIsRunning
+```</p>
+
+<br>
+
+
+<h3>Current Song</h3>
+
+<p>A more complicated one is the current song status.
+```
+if not appIsRunning("BetterTouchTool") then</p>
+
+<pre><code>tell application "BetterTouchTool" to activate
+</code></pre>
+
+<p>end if</p>
+
+<p>if appIsRunning("iTunes") then</p>
+
+<pre><code>tell application "iTunes"
+
+    if player state is paused then
+        name of current track &amp; "
+</code></pre>
+
+<p>" &amp; artist of current track &amp; "
+" &amp; album of current track &amp; " | " &amp; (round (((player position) / (duration of current track)) * 100)) &amp; "% - P"</p>
+
+<pre><code>    else if player state is not stopped and player state is playing then
+        name of current track &amp; "
+</code></pre>
+
+<p>" &amp; artist of current track &amp; "
+" &amp; album of current track &amp; " | " &amp; (round (((player position) / (duration of current track)) * 100)) &amp; "%"</p>
+
+<pre><code>    end if
+
+
+end tell
+</code></pre>
+
+<p>end if</p>
+
+<p>on appIsRunning(appName)</p>
+
+<pre><code>tell application "System Events" to (name of processes) contains appName
+</code></pre>
+
+<p>end appIsRunning
+```</p>
+
+<p>Now, pasting these isn't helping much. It does however give you an idea about what AppleScript is and possibliy gives you an idea of what can be accomplished. This is a GeekTool thread, so I am going to finish out with how to set up GeekTool specifically.</p>
+
+<h2>How To - GeekTool</h2>
+
+<ol>
+<li>Download and install <a href="http://itunes.apple.com/us/app/geektool/id456877552?mt=12">GeekTool</a> from the Mac App Store.</li>
+<li>Browse through the <a href="http://www.macosxtips.co.uk/geeklets/">Geeklets</a> webpage to get some ideas.</li>
+<li>Continue scrolling and download ALL THE LINKS!</li>
+</ol>
+
+
+<h4>AppleScripts</h4>
+
+<p>To use these, download an AppleScript, place it in a folder in which it will never be moved. I store my AppleScripts in <code>~/Documents/Scripts/</code>.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the 'command' box, put
+```bash
+osascript /path/to/file.scpt</p>
+
+<h1>in my case</h1>
+
+<p>osascript ~/Documents/Scripts/iTunesvol.scpt
+```</p>
+
+<p><a href="/downloads/geektool/iTunesvol.scpt">iTunesvol.scpt</a> - outputs the current internal iTunes volume.</p>
+
+<p><a href="/downloads/geektool/shuffstatus.scpt">shuffstatus.scpt</a> - outputs 'Yes' or 'No' depending on shuffle status of current playlist.</p>
+
+<p><a href="/downloads/geektool/currentsong.scpt">currentsong.scpt</a> - outputs information about current playing song in iTunes.</p>
+
+<br>
+
+
+<h4>Fan Speeds / Internal Temperatures</h4>
+
+<p>This next file is an application that is run with a terminal command, or in our case, through GeekTool. Place it in a place that you won't ever need to move it.</p>
+
+<p>Within GeekTool, create a new shell Geeklet. In the 'command' box, put
+```bash
+/path/to/fans_tempsMonitor</p>
+
+<h1>example</h1>
+
+<p>~/Documents/Scripts/fans_tempsMonitor
+```</p>
+
+<p>If that doesn't work, then you may need to execute this command before it.
+<code>bash
+chmod +x /path/to/fans_tempsMonitor
+</code></p>
+
+<p><a href="/downloads/geektool/fans_tempsMonitor">fans_tempsMonitor</a> - shell application that outputs fan speeds and internal computer temperatures.</p>
+
+<h4>Top CPU Processes</h4>
+
+<p>This one is easy. Just download the Geeklet, double click on it, and it will install automatically.</p>
+
+<p><a href="/downloads/geektool/top.glet">top.glet</a> - Geeklet that outputs the 2 top processes by CPU %.</p>
+
+<h4>Tips and Hints</h4>
+
+<p>I use the font Monaco size 11. It is monospace, which makes it very easy to format and make everything stay in line. I use a generic black background with white text.</p>
+
+<p>The one thing I have noticed with other peoples' AppleScripts is that they use variables. I did not like this solution because the AppleScripts would store some type of temporary variable in them and it would change the file somehow. This caused Dropbox to need to sync the file each time the AppleScript was run.</p>
+
+<p>I solved this problem by not using variables. It is especially messy in current_song.scpt, but it works.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Identites in Mountain Lion's Mail.app]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/05/identites-in-mail-dot-app/"/>
+    <updated>2012-05-16T10:52:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/05/identites-in-mail-dot-app</id>
+    <content type="html"><![CDATA[<p>Identities, or E-mails aliases, allow someone to send emails through one SMTP server while using multiple E-mails addresses. This option is present in most of todays E-mails clients, except Apple's Mail.app 5.0 option is hidden. There is a way to set up identities, but it will require a little bit of plist editing. I will give an example setup to make it easier to follow.</p>
+
+<!-- more -->
+
+
+<h2>First Steps</h2>
+
+<p>Before we do anything, let's backup the file we will be editing.
+<code>bash
+cp ~/Library/Mail/V2/MailData/Accounts.plist ~/Library/Mail/V2/MailData/Accounts_backup.plist
+</code></p>
+
+<p>Listed below is a primary email and two extra ones.</p>
+
+<pre>
+Primary Gmail:   tyler@gmail.com
+1st extra email: tyler@hotmail.com
+2nd extra email: tyler.smith@yahoo.com
+</pre>
+
+
+<p>I would like to be able to send E-mailss using the last two addresses but only use the SMTP servers fo the primary Gmail account. To make this possible, please look below and make sure your mail "Accounts" page looks similar to the one below. Note that this is basically the default setup for a single Gmail account on Mail.app.
+</br>
+</br>
+<img class="center" src="/images/posts/mail_accounts.png"></p>
+
+<p>The next step requires some plist editing. You are going to need to edit the file <code>~/Library/Mail/V2/MailData/Accounts.plist</code>. You can open it in Xcode if you have it or in a text editor. I will demonstrate both ways.</p>
+
+<h2>Xcode</h2>
+
+<p><img class="center" src="/images/posts/xcode_plist.png">
+Notice the default E-mails that was set up in Mail is listed as the "Email Address". Each alias has its own E-mails and name. Separate names are useful if you want to give your full name on some adresses and only your first on others.</p>
+
+<h2>Text Editor</h2>
+
+<p>Follow the format below for each new alias.
+```xml
+<dict></p>
+
+<pre><code>&lt;key&gt;alias&lt;/key&gt;
+&lt;string&gt;tyler@gmail.com&lt;/string&gt;
+&lt;key&gt;name&lt;/key&gt;
+&lt;string&gt;Tyler&lt;/string&gt;
+</code></pre>
+
+<p></dict>
+```
+Below is just a section of the <code>Accounts.plist</code> file, but it is enough for you to know where to place the edits.</p>
+
+<p>```xml /Library/Mail/V2/MailData/Accounts.plist
+<key>DaysBetweenSyncs</key>
+<integer>1</integer>
+<key>DraftsMailboxName</key>
+<string>Drafts</string>
+<key>EmailAddresses</key>
+<array></p>
+
+<pre><code>&lt;string&gt;tyler@gmail.com&lt;/string&gt;
+</code></pre>
+
+<p></array></p>
+
+<!-- Below is the edited part -->
+
+
+<p><key>EmailAliases</key>
+<array></p>
+
+<pre><code>&lt;dict&gt;
+    &lt;key&gt;alias&lt;/key&gt;
+    &lt;string&gt;tyler@gmail.com&lt;/string&gt;
+    &lt;key&gt;name&lt;/key&gt;
+    &lt;string&gt;Tyler&lt;/string&gt;
+&lt;/dict&gt;
+&lt;dict&gt;
+    &lt;key&gt;alias&lt;/key&gt;
+    &lt;string&gt;tyler@hotmail.com&lt;/string&gt;
+    &lt;key&gt;name&lt;/key&gt;
+    &lt;string&gt;Tyler S&lt;/string&gt;
+&lt;/dict&gt;
+&lt;dict&gt;
+    &lt;key&gt;alias&lt;/key&gt;
+    &lt;string&gt;tyler.smith@yahoo.com&lt;/string&gt;
+    &lt;key&gt;name&lt;/key&gt;
+    &lt;string&gt;Tyler Smith&lt;/string&gt;
+&lt;/dict&gt;
+</code></pre>
+
+<p></array></p>
+
+<!-- Above is the edited part -->
+
+
+<p><key>FullUserName</key>
+<string>Tyler Smith</string>
+<key>GmailCapabilitiesSupport</key>
+<integer>2</integer>
+```
+You are now done. If you quit Mail and open a "New Message", you will see an option to select multiple email addresses to send from, each with their own names.</p>
+
+<p><img class="center" src="/images/posts/mail_goal.png"></p>
+]]></content>
+  </entry>
+  
+</feed>

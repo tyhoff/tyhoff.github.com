@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: coding | tyler hoffman]]></title>
+  <link href="http://tyhoff.github.com/blog/categories/coding/atom.xml" rel="self"/>
+  <link href="http://tyhoff.github.com/"/>
+  <updated>2016-11-09T13:10:07-08:00</updated>
+  <id>http://tyhoff.github.com/</id>
+  <author>
+    <name><![CDATA[Tyler]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress: The Guide]]></title>
+    <link href="http://tyhoff.github.com/blog/2012/04/octopress-the-guide/"/>
+    <updated>2012-04-10T22:18:00-07:00</updated>
+    <id>http://tyhoff.github.com/blog/2012/04/octopress-the-guide</id>
+    <content type="html"><![CDATA[<p>Octopress is a blogging framework that doesn't use MySQL or PHP, and allows for quick, focused writing. It brings coders and hackers back to their roots. The benefits of <a href="http://octopress.org/">Octopress</a> are numerous, but you are encouraged to go to its website and learn more.</p>
+
+<p>The goal of this post is to allow anyone with a minimal programming background to set up and maintain an  blog. This website is run on an Ubuntu 11.10 VPS, so this guide will for Ubuntu installations. I opted to go with the all in one approach, everything that generates the website is located on the server.</p>
+
+<h3>There are 4 parts to this guide.</h3>
+
+<ol>
+<li>Installing RVM and Ruby</li>
+<li>Installing Octopress</li>
+<li>Configuring Apache</li>
+<li>How to start blogging</li>
+</ol>
+
+
+<!--more-->
+
+
+
+
+<br />
+
+
+<h3>Installing RVM and Ruby</h3>
+
+<p>RVM is the Ruby Version Manager. I have found that RVM is easier to install than rbenv, but others might disagree.
+<code>bash
+$ sudo apt-get update
+$ sudo bash -s stable &lt; &lt;(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+$ umask g+w
+$ source /etc/profile.d/rvm.sh
+</code>
+This next command will install all of the dependencies of Ruby.
+<code>bash
+$ sudo apt-get install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion
+</code>
+Replacing "user" with your UNIX login name will allow the user to edit the files in <code>/usr/local/rvm</code>.
+<code>bash
+$ sudo chown -R user:user /usr/local/rvm
+</code>
+Next, now that you have RVM installed, we can go ahead and install Ruby and set version 1.9.3 as the default version. (switch 1.9.3 with the current version if changed). The following command will take 15-20 minutes, so don't be afraid if it takes a while to finish.
+<code>bash
+$ rvm install 1.9.3 &amp;&amp; rvm use 1.9.3
+$ ruby -v
+</code>
+The last command there should show <code>ruby 1.9.3p125</code> or something similar.</p>
+
+<br />
+
+
+<h3>Installing Octopress</h3>
+
+<p>If at anytime during the next few steps RVM asks if you would like to trust the .rvmc file, you can safely say "yes"
+<code>bash
+$ cd
+$ git clone git://github.com/imathis/octopress.git octopress
+$ cd octopress    
+$ gem install bundler
+$ bundle install
+$ rake install
+</code></p>
+
+<p>This final step to get Octopress to install. This will build the files that are located in <code>/source/</code> and publish them into the <code>/public/</code> folder.<br/>
+<code>bash
+$ rake generate
+</code></p>
+
+<br />
+
+
+<h3>Configuring Apache</h3>
+
+<p>I am going to assume that Apache is already working, meaning that if you typed in <code>127.0.0.1</code> or <code>localhost</code> into the browser of your server, or by typing in the IP of your VPS, you should see a "It Works" page.</p>
+
+<p>The first and only step is to change what directory Apache looks in to display the webpage. I am going to create a new webpage configuration with the name <code>mysite</code>. You may name it how you like and change out the name when applicable.
+<code>bash
+$ cd /etc/apache2/sites-available
+$ sudo cp default mysite
+</code></p>
+
+<p>Now you have to open the new configuration file with your favorite editor. I am going to use vim
+<code>bash
+$ sudo vim mysite
+</code>
+I put comments above the two lines that need to be changed. You need to change <code>/var/www</code> to the path of the Octopress public folder, which is most likely <code>/home/user/octopress/public</code>, where "user" is your UNIX username.
+``` xml /etc/apache2/sites-available/mysite
+<VirtualHost *:80></p>
+
+<pre><code>ServerAdmin webmaster@localhost
+
+&lt;!-- point the line below to Octopress's public folder --&gt;
+DocumentRoot /path/to/octopress/public/folder    
+&lt;Directory /&gt;
+    Options FollowSymLinks
+    AllowOverride None
+&lt;/Directory&gt;
+
+&lt;!-- point the line below to Octopress's public folder --&gt;
+&lt;Directory /path/to/octopress/public/folder &gt;
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+&lt;/Directory&gt;
+
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+&lt;Directory "/usr/lib/cgi-bin"&gt;
+    AllowOverride None
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+
+ErrorLog ${APACHE_LOG_DIR}/error.log
+
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+LogLevel warn
+
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+Alias /doc/ "/usr/share/doc/"
+&lt;Directory "/usr/share/doc/"&gt;
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride None
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.0/255.0.0.0 ::1/128
+&lt;/Directory&gt;
+</code></pre>
+
+<p></VirtualHost>
+<code>
+The final thing to do is to restart Apache so that the changes show up
+</code>bash
+$ sudo service apache2 reload
+```
+There! Now if you go to the address of your webpage, you should see a generic Octopress page. If you don't, leave a comment and we will see what we can do.</p>
+
+<br />
+
+
+<h3>How to start blogging</h3>
+
+<p>To insert a new post, type:
+<code>bash
+$ rake new_post["post title"]
+</code>
+This will create a new file in the directory <code>/source/_posts/"date and name of post"</code>. You will need to edit this file using the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> syntax. It is quite simple to understand and learn.</p>
+
+<p>Each time you create a new post, you can use the following command to update the webpage and push any changes to the public folder.
+<code>bash
+$ rake generate
+</code>
+If you want to learn more about how to manage posts and create pages, please visit the Octopress page <a href="http://octopress.org/docs/blogging/">Blogging Basics</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
